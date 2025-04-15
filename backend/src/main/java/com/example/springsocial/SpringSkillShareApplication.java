@@ -7,9 +7,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
-public class SpringSocialApplication {
+public class SpringSkillShareApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringSocialApplication.class, args);
+		SpringApplication.run(SpringSkillShareApplication.class, args);
 	}
 }
