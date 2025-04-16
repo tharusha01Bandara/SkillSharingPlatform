@@ -1,14 +1,15 @@
 package com.example.springsocial.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.springsocial.model.CourseModel;
 import com.example.springsocial.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -17,30 +18,25 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private Cloudinary cloudinary;
+
     // Save course data
     @PostMapping("/course")
     public CourseModel newCourseModel(@RequestBody CourseModel newCourseModel) {
         return courseRepository.save(newCourseModel);
     }
 
-    // Upload course video
+    // Upload course video to Cloudinary
     @PostMapping("/course/uploadVideo")
     public String uploadVideo(@RequestParam("file") MultipartFile file) {
-        String folder = "src/main/uploads/";
-        String videoName = file.getOriginalFilename();
-
         try {
-            File uploadDir = new File(folder);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs(); // creates folder if not exists
-            }
-
-            file.transferTo(Paths.get(folder + videoName));
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "video"));
+            return uploadResult.get("secure_url").toString();
         } catch (IOException e) {
             e.printStackTrace();
-            return "Error uploading video: " + videoName;
+            return "Error uploading video";
         }
-
-        return videoName;
     }
 }
