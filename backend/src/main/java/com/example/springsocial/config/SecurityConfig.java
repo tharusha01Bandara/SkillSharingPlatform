@@ -18,8 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -105,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js"
                     ).permitAll()
                     .antMatchers("/auth/**", "/oauth2/**").permitAll()
-                    .antMatchers("/course/**").permitAll() // 👈 Allow public access to /course endpoints
+                    .antMatchers("/course/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .oauth2Login()
