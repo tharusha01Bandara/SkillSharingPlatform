@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../constants"; // adjust import if needed
 
 function AddCourse() {
   const [formData, setFormData] = useState({
@@ -8,45 +9,31 @@ function AddCourse() {
     yearLevel: "",
     courseCode: "",
     description: "",
-    enrollmentKey: "",
-    videoUrl: ""
+    enrollmentKey: ""
   });
 
-  const [videoFile, setVideoFile] = useState(null);
-
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleFileChange = e => {
-    setVideoFile(e.target.files[0]);
-  };
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      let videoUrl = "";
+      const res = await axios.post(`${API_BASE_URL}/course`, formData, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
 
-      if (videoFile) {
-        const uploadData = new FormData();
-        uploadData.append("file", videoFile);
-
-        const uploadRes = await axios.post("http://localhost:8080/course/uploadVideo", uploadData);
-        videoUrl = uploadRes.data;
-      }
-
-      const courseData = { ...formData, videoUrl };
-
-      await axios.post("http://localhost:8080/course", courseData);
-
+      console.log(res.data);
       alert("Course uploaded successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Upload failed!");
+    } catch (error) {
+      console.error("Error uploading course:", error);
+      alert("Failed to upload course!");
     }
   };
 
@@ -54,17 +41,17 @@ function AddCourse() {
     <div>
       <h2>Add Course</h2>
       <form onSubmit={handleSubmit}>
-        <input name="courseName" placeholder="Course Name" onChange={handleInputChange} />
-        <input name="lecturerId" placeholder="Lecturer Id" onChange={handleInputChange} />
-        <input name="yearLevel" placeholder="Year Level" onChange={handleInputChange} />
-        <input name="courseCode" placeholder="Course Code" onChange={handleInputChange} />
-        <input name="description" placeholder="Description" onChange={handleInputChange} />
-        <input name="enrollmentKey" placeholder="Enrollment Key" onChange={handleInputChange} />
-        <input type="file" onChange={handleFileChange} />
+        <input name="courseName" placeholder="Course Name" onChange={handleInputChange} required />
+        <input name="lecturerId" placeholder="Lecturer Id" onChange={handleInputChange} required />
+        <input name="yearLevel" placeholder="Year Level" onChange={handleInputChange} required />
+        <input name="courseCode" placeholder="Course Code" onChange={handleInputChange} required />
+        <input name="description" placeholder="Description" onChange={handleInputChange} required />
+        <input name="enrollmentKey" placeholder="Enrollment Key" onChange={handleInputChange} required />
         <button type="submit">Submit</button>
       </form>
     </div>
   );
 }
+
 
 export default AddCourse;
