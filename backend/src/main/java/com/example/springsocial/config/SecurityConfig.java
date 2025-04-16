@@ -51,11 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new TokenAuthenticationFilter();
     }
 
-    /*
-      By default, Spring OAuth2 uses HttpSessionOAuth2AuthorizationRequestRepository to save
-      the authorization request. But, since our service is stateless, we can't save it in
-      the session. We'll save the request in a Base64 encoded cookie instead.
-    */
     @Bean
     public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
         return new HttpCookieOAuth2AuthorizationRequestRepository();
@@ -72,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -98,7 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/",
+                    .antMatchers(
+                        "/",
                         "/error",
                         "/favicon.ico",
                         "/**/*.png",
@@ -107,12 +102,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/**/*.html",
                         "/**/*.css",
-                        "/**/*.js")
-                        .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**")
-                        .permitAll()
-                    .anyRequest()
-                        .authenticated()
+                        "/**/*.js"
+                    ).permitAll()
+                    .antMatchers("/auth/**", "/oauth2/**").permitAll()
+                    .antMatchers("/course/**").permitAll() // 👈 Allow public access to /course endpoints
+                    .anyRequest().authenticated()
                     .and()
                 .oauth2Login()
                     .authorizationEndpoint()
@@ -128,7 +122,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler);
 
-        // Add our custom Token based authentication filter
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
