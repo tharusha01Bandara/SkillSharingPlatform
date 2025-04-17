@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,13 +22,7 @@ public class CourseController {
     @Autowired
     private Cloudinary cloudinary;
 
-    // Save course data
-    @PostMapping("/course")
-    public CourseModel newCourseModel(@RequestBody CourseModel newCourseModel) {
-        return courseRepository.save(newCourseModel);
-    }
-
-    // Upload course video to Cloudinary
+    // Upload course video to Cloudinary and return the video URL
     @PostMapping("/course/uploadVideo")
     public String uploadVideo(@RequestParam("file") MultipartFile file) {
         try {
@@ -38,5 +33,17 @@ public class CourseController {
             e.printStackTrace();
             return "Error uploading video";
         }
+    }
+
+    // Save course data (with video URL included)
+    @PostMapping("/course")
+    public CourseModel newCourseModel(@RequestBody CourseModel newCourseModel) {
+        return courseRepository.save(newCourseModel);
+    }
+
+    // Fetch all courses
+    @GetMapping("/courses")
+    public List<CourseModel> getAllCourses() {
+        return courseRepository.findAll();
     }
 }
