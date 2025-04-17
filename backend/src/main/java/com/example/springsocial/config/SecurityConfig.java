@@ -104,6 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     ).permitAll()
                     .antMatchers("/auth/**", "/oauth2/**").permitAll()
                     .antMatchers("/course/**").permitAll()
+                    .antMatchers("/courses").permitAll() // ✅ Added for public course listing
                     .anyRequest().authenticated()
                     .and()
                 .oauth2Login()
