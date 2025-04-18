@@ -20,6 +20,8 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import './App.css';
 import AddCourse from '../components/AddCourse';
 import CourseList from '../components/CourseList';
+import CourseTable from '../components/CourseTable';
+import UpdateCourse from '../components/UpdateCourse'; //
 
 
 
@@ -79,6 +81,11 @@ class App extends Component {
             <Route exact path="/" component={Home}></Route> 
             <Route exact path="/ADDcourse" component={AddCourse} />
             <Route path="/courses" component={CourseList}></Route>
+            <Route path="/coursesTable" component={CourseTable}></Route>
+        
+            <Route path="/update-course/:id" component={UpdateCourse} />
+
+
 
           
             <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
