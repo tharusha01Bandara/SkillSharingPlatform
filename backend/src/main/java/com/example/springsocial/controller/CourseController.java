@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.springsocial.model.CourseModel;
 import com.example.springsocial.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,5 +46,32 @@ public class CourseController {
     @GetMapping("/courses")
     public List<CourseModel> getAllCourses() {
         return courseRepository.findAll();
+    }
+
+    // Update existing course
+    @PutMapping("/courses/{id}")
+    public CourseModel updateCourse(@PathVariable Long id, @RequestBody CourseModel updatedCourse) {
+        CourseModel course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found with id " + id));
+
+        course.setCourseName(updatedCourse.getCourseName());
+        course.setCourseCode(updatedCourse.getCourseCode());
+        course.setLecturerId(updatedCourse.getLecturerId());
+        course.setYearLevel(updatedCourse.getYearLevel());
+        course.setDescription(updatedCourse.getDescription());
+        course.setEnrollmentKey(updatedCourse.getEnrollmentKey());
+        course.setVideoUrl(updatedCourse.getVideoUrl());
+
+        return courseRepository.save(course);
+    }
+
+    // Delete a course
+    @DeleteMapping("/courses/{id}")
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
+        if (!courseRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        courseRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
