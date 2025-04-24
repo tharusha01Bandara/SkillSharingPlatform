@@ -18,8 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -77,50 +75,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors()
-                    .and()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                .csrf()
-                    .disable()
-                .formLogin()
-                    .disable()
-                .httpBasic()
-                    .disable()
-                .exceptionHandling()
-                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                    .and()
-                .authorizeRequests()
-                    .antMatchers(
-                        "/",
-                        "/error",
-                        "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js"
-                    ).permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**").permitAll()
-                    .antMatchers("/course/**").permitAll() // 👈 Allow public access to /course endpoints
-                    .anyRequest().authenticated()
-                    .and()
-                .oauth2Login()
-                    .authorizationEndpoint()
-                        .baseUri("/oauth2/authorize")
-                        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                        .and()
-                    .redirectionEndpoint()
-                        .baseUri("/oauth2/callback/*")
-                        .and()
-                    .userInfoEndpoint()
-                        .userService(customOAuth2UserService)
-                        .and()
-                    .successHandler(oAuth2AuthenticationSuccessHandler)
-                    .failureHandler(oAuth2AuthenticationFailureHandler);
+            .cors().and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .csrf().disable()
+            .formLogin().disable()
+            .httpBasic().disable()
+            .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint()).and()
+            .authorizeRequests()
+                // Static and public resources
+                .antMatchers(
+                    "/", "/error", "/favicon.ico",
+                    "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg",
+                    "/**/*.html", "/**/*.css", "/**/*.js"
+                ).permitAll()
+                // Auth and OAuth
+                .antMatchers("/auth/**", "/oauth2/**").permitAll()
+
+                // Public course API (view, add, update, delete, upload video)
+                .antMatchers("/courses/**", "/courses", "/course/**", "/course").permitAll()
+
+                // Any other endpoint
+                .anyRequest().authenticated()
+            .and()
+            .oauth2Login()
+                .authorizationEndpoint()
+                    .baseUri("/oauth2/authorize")
+                    .authorizationRequestRepository(cookieAuthorizationRequestRepository()).and()
+                .redirectionEndpoint()
+                    .baseUri("/oauth2/callback/*").and()
+                .userInfoEndpoint()
+                    .userService(customOAuth2UserService).and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
