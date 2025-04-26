@@ -95,7 +95,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // Public course API (view, add, update, delete, upload video)
                 .antMatchers("/courses/**", "/courses", "/course/**", "/course").permitAll()
-
+          
+                 //learning-plans API
+                 .antMatchers("/learning-plans/*", "/learning-plans", "/learning-plans/*", "/learning-plans").permitAll()
+                    
                 // 👇 NOW ADDED: Public skill post API
                 .antMatchers("/skillposts/**", "/skillposts", "/skillpost/**", "/skillpost").permitAll()
 
