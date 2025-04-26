@@ -22,6 +22,9 @@ import AddCourse from '../components/AddCourse';
 import CourseList from '../components/CourseList';
 import CourseTable from '../components/CourseTable';
 import UpdateCourse from '../components/UpdateCourse'; //
+import AddSkillPost from '../components/AddSkillPost';
+import SkillPostList from '../components/SkillPostList';
+
 
 
 
@@ -85,8 +88,10 @@ class App extends Component {
         
             <Route path="/update-course/:id" component={UpdateCourse} />
 
+            <Route exact path="/AddSkillPost" component={AddSkillPost} />
+            <Route exact path="/SkillPostList" component={SkillPostList} />
 
-
+      
           
             <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
               component={Profile}></PrivateRoute>
