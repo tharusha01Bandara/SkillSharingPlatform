@@ -30,7 +30,15 @@ import PrivateRoute from '../common/PrivateRoute';
 import AddCourse from '../components/AddCourse';
 import CourseList from '../components/CourseList';
 import CourseTable from '../components/CourseTable';
+
 import UpdateCourse from '../components/UpdateCourse';
+
+import UpdateCourse from '../components/UpdateCourse'; //
+import AddSkillPost from '../components/AddSkillPost';
+import SkillPostList from '../components/SkillPostList';
+
+
+
 
 class App extends Component {
   constructor(props) {
@@ -78,6 +86,7 @@ class App extends Component {
     }
 
     return (
+
       <Router>
         <div className="app">
         <Switch>
@@ -98,6 +107,39 @@ class App extends Component {
           <Route exact path='/contact' component={Contact} />
         </Switch>
         <Footer />
+
+      <div className="app">
+        <div className="app-top-box">
+          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} />
+        </div>
+        <div className="app-body">
+          <Switch>
+            <Route exact path="/" component={Home}></Route> 
+            <Route exact path="/ADDcourse" component={AddCourse} />
+            <Route path="/courses" component={CourseList}></Route>
+            <Route path="/coursesTable" component={CourseTable}></Route>
+        
+            <Route path="/update-course/:id" component={UpdateCourse} />
+
+            <Route exact path="/AddSkillPost" component={AddSkillPost} />
+            <Route exact path="/SkillPostList" component={SkillPostList} />
+
+      
+          
+            <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+              component={Profile}></PrivateRoute>
+            <Route path="/login"
+              render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
+            <Route path="/signup"
+              render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}></Route>
+            <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
+            <Route component={NotFound}></Route>
+          </Switch>
+        </div>
+        <Alert stack={{limit: 3}} 
+          timeout = {3000}
+          position='top-right' effect='slide' offset={65} />
+
       </div>
     )}
   />
@@ -129,12 +171,11 @@ class App extends Component {
   />
   <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
 
-  {/* 404 Page */}
   <Route component={NotFound} />
 </Switch>
 
 
-          {/* Global Alerts */}
+ 
           <Alert
             stack={{ limit: 3 }}
             timeout={3000}
