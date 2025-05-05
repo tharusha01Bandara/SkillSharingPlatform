@@ -6,8 +6,7 @@ import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
-import Header from "../home/common/header/Header"
-
+import Header from "../home/common/header/Header";
 import About from '../home/about/About';
 import CourseHome from '../home/allcourses/CourseHome';
 import Team from '../home/team/Team';
@@ -30,15 +29,9 @@ import PrivateRoute from '../common/PrivateRoute';
 import AddCourse from '../components/AddCourse';
 import CourseList from '../components/CourseList';
 import CourseTable from '../components/CourseTable';
-
 import UpdateCourse from '../components/UpdateCourse';
-
-import UpdateCourse from '../components/UpdateCourse'; //
 import AddSkillPost from '../components/AddSkillPost';
 import SkillPostList from '../components/SkillPostList';
-
-
-
 
 class App extends Component {
   constructor(props) {
@@ -86,96 +79,68 @@ class App extends Component {
     }
 
     return (
-
       <Router>
         <div className="app">
-        <Switch>
-  {/* Frontend pages with layout */}
-  <Route
-    path="/(about|courses|team|pricing|journal|contact)?"
-    exact
-    render={() => (
-      <div>
-        <Header />
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <Route exact path='/about' component={About} />
-          <Route exact path='/courses' component={CourseHome} />
-          <Route exact path='/team' component={Team} />
-          <Route exact path='/pricing' component={Pricing} />
-          <Route exact path='/journal' component={Blog} />
-          <Route exact path='/contact' component={Contact} />
-        </Switch>
-        <Footer />
-
-      <div className="app">
-        <div className="app-top-box">
-          <AppHeader authenticated={this.state.authenticated} onLogout={this.handleLogout} />
-        </div>
-        <div className="app-body">
           <Switch>
-            <Route exact path="/" component={Home}></Route> 
+            {/* Public site with header/footer layout */}
+            <Route
+              exact
+              path={['/', '/about', '/courses', '/team', '/pricing', '/journal', '/contact']}
+              render={() => (
+                <React.Fragment>
+                  <Header />
+                  <Switch>
+                    <Route exact path='/' component={Home} />
+                    <Route exact path='/about' component={About} />
+                    <Route exact path='/courses' component={CourseHome} />
+                    <Route exact path='/team' component={Team} />
+                    <Route exact path='/pricing' component={Pricing} />
+                    <Route exact path='/journal' component={Blog} />
+                    <Route exact path='/contact' component={Contact} />
+                  </Switch>
+                  <Footer />
+                </React.Fragment>
+              )}
+            />
+
+            {/* Admin/Instructor Routes */}
             <Route exact path="/ADDcourse" component={AddCourse} />
-            <Route path="/courses" component={CourseList}></Route>
-            <Route path="/coursesTable" component={CourseTable}></Route>
-        
+            <Route exact path="/admin/courses" component={CourseList} />
+            <Route exact path="/coursesTable" component={CourseTable} />
             <Route path="/update-course/:id" component={UpdateCourse} />
 
+            {/* Skill Posts */}
             <Route exact path="/AddSkillPost" component={AddSkillPost} />
             <Route exact path="/SkillPostList" component={SkillPostList} />
 
-      
-          
-            <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-              component={Profile}></PrivateRoute>
-            <Route path="/login"
-              render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
-            <Route path="/signup"
-              render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}></Route>
-            <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
-            <Route component={NotFound}></Route>
+            {/* Authenticated User Routes */}
+            <PrivateRoute
+              path="/profile"
+              authenticated={this.state.authenticated}
+              currentUser={this.state.currentUser}
+              component={Profile}
+            />
+
+            {/* Login / Signup */}
+            <Route
+              path="/login"
+              render={(props) => (
+                <Login authenticated={this.state.authenticated} {...props} />
+              )}
+            />
+            <Route
+              path="/signup"
+              render={(props) => (
+                <Signup authenticated={this.state.authenticated} {...props} />
+              )}
+            />
+            <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
+
+            {/* 404 fallback */}
+            <Route component={NotFound} />
           </Switch>
-        </div>
-        <Alert stack={{limit: 3}} 
-          timeout = {3000}
-          position='top-right' effect='slide' offset={65} />
 
-      </div>
-    )}
-  />
-
-  {/* Admin/Instructor Routes */}
-  <Route exact path="/ADDcourse" component={AddCourse} />
-  <Route exact path="/admin/courses" component={CourseList} />
-  <Route exact path="/coursesTable" component={CourseTable} />
-  <Route path="/update-course/:id" component={UpdateCourse} />
-
-  {/* User/Auth Routes */}
-  <PrivateRoute
-    path="/profile"
-    authenticated={this.state.authenticated}
-    currentUser={this.state.currentUser}
-    component={Profile}
-  />
-  <Route
-    path="/login"
-    render={(props) => (
-      <Login authenticated={this.state.authenticated} {...props} />
-    )}
-  />
-  <Route
-    path="/signup"
-    render={(props) => (
-      <Signup authenticated={this.state.authenticated} {...props} />
-    )}
-  />
-  <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
-
-  <Route component={NotFound} />
-</Switch>
-
-
- 
+          {/* Global alert system */}
           <Alert
             stack={{ limit: 3 }}
             timeout={3000}
