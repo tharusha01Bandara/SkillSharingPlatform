@@ -6,6 +6,7 @@
     "axios": "^0.27.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
+    "react-icons": "^5.5.0",
     "react-router-dom": "5.2",
     "react-s-alert": "^1.4.1",
     "react-scripts": "1.1.5"
