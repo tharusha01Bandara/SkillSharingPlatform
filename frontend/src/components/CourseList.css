@@ -21,9 +21,22 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
+  min-height: 100vh;
+
+  /* Background image settings */
+  background: 
+    linear-gradient(to bottom right, rgba(11, 113, 144, 0.95), rgba(255, 255, 255, 0.95)),
+    url('./images/course-list-bg.jpg'); /* Replace with your actual path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* 👈 Keeps the background fixed on scroll */
+
+  /* Optional: enhance foreground readability */
+  backdrop-filter: blur(2px);
 }
+
+
 
 /* Header Styles */
 .course-header {
@@ -37,13 +50,13 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0;
-  color: var(--text-primary);
+  color: var(--card-bg);
   line-height: 1.2;
 }
 
 .course-header-text p {
   font-size: 1.125rem;
-  color: var(--text-secondary);
+  color: var(--card-bg);
   margin: 0.5rem 0 0;
   max-width: 600px;
 }
@@ -388,4 +401,62 @@
   .course-grid {
     grid-template-columns: 1fr;
   }
+}
+
+
+.interaction-section {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.like-button {
+  background-color: #1eb2a6;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.like-button:hover {
+  background-color: #159a91;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-section input[type="text"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.comment-section input[type="text"]:focus {
+  border-color: #1eb2a6;
+}
+
+.comment-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+  padding-left: 10px;
+}
+
+.comment-item {
+  background-color: #f1f1f1;
+  padding: 6px 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  font-size: 14px;
 }

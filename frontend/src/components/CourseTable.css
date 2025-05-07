@@ -37,8 +37,15 @@
   margin: 0 auto;
   padding: 2rem;
   color: var(--text-primary);
-  background-color: var(--bg-color);
   min-height: 100vh;
+
+  background: 
+    linear-gradient(to bottom right, rgba(3, 108, 122, 0.9), rgba(38, 56, 61, 0.9)),
+    url('./images/course-table-bg.jpg'); /* Update with your actual image name/path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Optional: makes background stay during scroll */
 }
 
 /* Table Header */
