@@ -105,135 +105,123 @@ function AddCourse() {
 
   return (
     <div className="add-course-container">
-      <div className="form-card">
-        <h2 className="form-title">Add New Course</h2>
-        
-        {notification.show && (
-          <div className={`notification ${notification.type}`}>
-            {notification.message}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="courseName">Course Name</label>
-              <input 
-                id="courseName"
-                name="courseName"
-                value={formData.courseName}
-                placeholder="e.g. Introduction to Computer Science" 
-                onChange={handleInputChange} 
-                required 
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="courseCode">Course Code</label>
-              <input 
-                id="courseCode"
-                name="courseCode" 
-                value={formData.courseCode}
-                placeholder="e.g. CS101" 
-                onChange={handleInputChange} 
-                required 
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="lecturerId">Lecturer ID</label>
-              <input 
-                id="lecturerId"
-                name="lecturerId" 
-                value={formData.lecturerId}
-                placeholder="e.g. PROF123" 
-                onChange={handleInputChange} 
-                required 
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="yearLevel">Year Level</label>
-              <select 
-                id="yearLevel"
-                name="yearLevel" 
-                value={formData.yearLevel}
-                onChange={handleInputChange} 
-                required
-              >
-                <option value="">Select Year Level</option>
-                <option value="1">First Year</option>
-                <option value="2">Second Year</option>
-                <option value="3">Third Year</option>
-                <option value="4">Fourth Year</option>
-                <option value="postgrad">Postgraduate</option>
-              </select>
-            </div>
-          </div>
-          
+    <div className="form-card glass-card">
+      <h2 className="form-title">📚 Create a New Course</h2>
+      <p className="form-subtitle">Fill out the form to publish your course</p>
+  
+      {notification.show && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
+  
+      <form onSubmit={handleSubmit}>
+        <div className="form-grid">
           <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea 
-              id="description"
-              name="description" 
-              value={formData.description}
-              placeholder="Provide a detailed description of the course..." 
-              onChange={handleInputChange} 
-              rows="4"
-              required 
-            ></textarea>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="enrollmentKey">Enrollment Key</label>
-            <input 
-              id="enrollmentKey"
-              name="enrollmentKey" 
-              value={formData.enrollmentKey}
-              placeholder="Create a unique enrollment key for students" 
-              onChange={handleInputChange} 
-              required 
+            <label htmlFor="courseName">Course Name</label>
+            <input
+              id="courseName"
+              name="courseName"
+              value={formData.courseName}
+              onChange={handleInputChange}
+              placeholder="e.g. Web Development Basics"
+              required
             />
           </div>
-          
           <div className="form-group">
-            <label>Course Video</label>
-            <div className="file-upload-container">
-              <label htmlFor="video-upload" className="file-upload-label">
-                <div className="upload-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                </div>
-                <span className="upload-text">
-                  {fileName ? fileName : "Click to select video or drag and drop"}
-                </span>
-              </label>
-              <input 
-                type="file" 
-                id="video-upload" 
-                accept="video/*" 
-                onChange={handleFileChange} 
-                required 
-              />
-            </div>
+            <label htmlFor="courseCode">Course Code</label>
+            <input
+              id="courseCode"
+              name="courseCode"
+              value={formData.courseCode}
+              onChange={handleInputChange}
+              placeholder="e.g. WD101"
+              required
+            />
           </div>
-          
-          <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? (
-              <div>
-                <span className="spinner"></span>
-                <span>Uploading...</span>
-              </div>
-            ) : (
-              "Create Course"
-            )}
-          </button>
-        </form>
-      </div>
+          <div className="form-group">
+            <label htmlFor="lecturerId">Lecturer ID</label>
+            <input
+              id="lecturerId"
+              name="lecturerId"
+              value={formData.lecturerId}
+              onChange={handleInputChange}
+              placeholder="e.g. LECT01"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="yearLevel">Year Level</label>
+            <select
+              id="yearLevel"
+              name="yearLevel"
+              value={formData.yearLevel}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Level</option>
+              <option value="1">First Year</option>
+              <option value="2">Second Year</option>
+              <option value="3">Third Year</option>
+              <option value="4">Fourth Year</option>
+              <option value="postgrad">Postgraduate</option>
+            </select>
+          </div>
+        </div>
+  
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Write a compelling course description..."
+            rows="4"
+            required
+          />
+        </div>
+  
+        <div className="form-group">
+          <label htmlFor="enrollmentKey">Enrollment Key</label>
+          <input
+            id="enrollmentKey"
+            name="enrollmentKey"
+            value={formData.enrollmentKey}
+            onChange={handleInputChange}
+            placeholder="Private key for student access"
+            required
+          />
+        </div>
+  
+        <div className="form-group">
+          <label>Course Video</label>
+          <div className="file-upload-container">
+            <label htmlFor="video-upload" className="file-upload-label">
+              <span className="upload-icon">📤</span>
+              <span className="upload-text">{fileName || "Upload video file"}</span>
+            </label>
+            <input
+              type="file"
+              id="video-upload"
+              accept="video/*"
+              onChange={handleFileChange}
+              required
+            />
+          </div>
+        </div>
+  
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? (
+            <span className="loading-spinner">⏳ Uploading...</span>
+          ) : (
+            "Create Course"
+          )}
+        </button>
+      </form>
     </div>
+  </div>
+  
   );
 }
 

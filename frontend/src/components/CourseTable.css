@@ -13,7 +13,7 @@
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --text-light: #94a3b8;
-  --bg-color: #f8fafc;
+  --bg-color: #2e938e;
   --card-bg: #ffffff;
   --border-color: #e2e8f0;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -325,34 +325,22 @@
   justify-content: flex-end;
 }
 
-.edit-btn, .delete-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.edit-btn {
+.courseedit-btn {
   background-color: var(--primary-light);
   color: var(--primary-color);
 }
 
-.edit-btn:hover {
+.courseedit-btn:hover {
   background-color: var(--primary-color);
   color: white;
 }
 
-.delete-btn {
+.coursedelete-btn {
   background-color: var(--danger-light);
   color: var(--danger-color);
 }
 
-.delete-btn:hover {
+.coursedelete-btn:hover {
   background-color: var(--danger-color);
   color: white;
 }

@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import './Signup.css';
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom';
 import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants';
 import { signup } from '../../util/APIUtils';
-import fbLogo from '../../img/fb-logo.png';
 import googleLogo from '../../img/google-logo.png';
+import fbLogo from '../../img/fb-logo.png';
 import githubLogo from '../../img/github-logo.png';
 import Alert from 'react-s-alert';
 
 class Signup extends Component {
     render() {
-        if(this.props.authenticated) {
+        if (this.props.authenticated) {
             return <Redirect
                 to={{
                 pathname: "/",
@@ -20,30 +20,47 @@ class Signup extends Component {
 
         return (
             <div className="signup-container">
-                <div className="signup-content">
-                    <SocialSignup />
-                    <div className="or-separator">
-                        <span className="or-text">OR</span>
+                <div className="auth-wrapper">
+                    <div className="auth-form">
+                        <h2>Welcome Back</h2>
+                        <p className="auth-subtitle">Sign up to continue your learning journey</p>
+                        
+                        <SocialSignup />
+                        
+                        <div className="or-separator">
+                            <span className="or-text">OR</span>
+                        </div>
+                        
+                        <SignupForm {...this.props} />
+                        
+                        <div className="auth-footer">
+                            <span className="login-link">New to Academia? <Link to="/login">Sign up!</Link></span>
+                        </div>
                     </div>
-                    <SignupForm {...this.props} />
-                    <span className="login-link">Already have an account? <Link to="/login">Login!</Link></span>
+                    
+                    <div className="auth-promo">
+                        <div className="promo-content">
+                            <h2>Join Our Learning Community</h2>
+                            <p>Access thousands of courses and connect with experts worldwide.</p>
+                            <button className="explore-btn">Explore Courses</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
 }
 
-
 class SocialSignup extends Component {
     render() {
         return (
             <div className="social-signup">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google" /> Sign up with Google</a>
-                <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-                    <img src={fbLogo} alt="Facebook" /> Sign up with Facebook</a>
-                <a className="btn btn-block social-btn github" href={GITHUB_AUTH_URL}>
-                    <img src={githubLogo} alt="Github" /> Sign up with Github</a>
+                <a className="social-btn google" href={GOOGLE_AUTH_URL}>
+                    <img src={googleLogo} alt="Google" /> Continue with Google</a>
+                <a className="social-btn facebook" href={FACEBOOK_AUTH_URL}>
+                    <img src={fbLogo} alt="Facebook" /> Continue with Facebook</a>
+                <a className="social-btn github" href={GITHUB_AUTH_URL}>
+                    <img src={githubLogo} alt="Github" /> Continue with Github</a>
             </div>
         );
     }
@@ -53,7 +70,6 @@ class SignupForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
             email: '',
             password: ''
         }
@@ -88,28 +104,41 @@ class SignupForm extends Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <div className="form-item">
-                    <input type="text" name="name" 
-                        className="form-control" placeholder="Name"
-                        value={this.state.name} onChange={this.handleInputChange} required/>
+                <div className="form-group">
+                    <label>Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        className="form-control" 
+                        placeholder="Enter your email"
+                        value={this.state.email} 
+                        onChange={this.handleInputChange} 
+                        required
+                    />
                 </div>
-                <div className="form-item">
-                    <input type="email" name="email" 
-                        className="form-control" placeholder="Email"
-                        value={this.state.email} onChange={this.handleInputChange} required/>
+                <div className="form-group">
+                    <label>Password</label>
+                    <div className="password-field">
+                        <input 
+                            type="password" 
+                            name="password" 
+                            className="form-control" 
+                            placeholder="Enter your password"
+                            value={this.state.password} 
+                            onChange={this.handleInputChange} 
+                            required
+                        />
+                        <div className="forgot-password">
+                            <Link to="/forgot-password">Forgot password?</Link>
+                        </div>
+                    </div>
                 </div>
-                <div className="form-item">
-                    <input type="password" name="password" 
-                        className="form-control" placeholder="Password"
-                        value={this.state.password} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <button type="submit" className="btn btn-block btn-primary" >Sign Up</button>
+                <div className="form-group">
+                    <button type="submit" className="btn btn-login">Log In</button>
                 </div>
             </form>                    
-
         );
     }
 }
 
-export default Signup
+export default Signup;
