@@ -9,6 +9,20 @@ function SkillPostList() {
   const [error, setError] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(null);
 
+  // Array of colors for titles
+  const titleColors = [
+    "#3498db", // Blue
+    "#e74c3c", // Red
+    "#2ecc71", // Green
+    "#9b59b6", // Purple
+    "#f39c12", // Orange
+    "#16a085", // Teal
+    "#d35400", // Dark Orange
+    "#8e44ad", // Dark Purple
+    "#27ae60", // Emerald
+    "#3498db", // Blue
+  ];
+
   useEffect(() => {
     fetchSkillPosts();
   }, []);
@@ -43,6 +57,11 @@ function SkillPostList() {
   const truncateText = (text, maxLength = 150) => {
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + '...';
+  };
+
+  // Function to get a color for a post based on its index
+  const getPostColor = (index) => {
+    return titleColors[index % titleColors.length];
   };
 
   // Function to handle editing a skill post
@@ -107,11 +126,18 @@ function SkillPostList() {
       )}
 
       <div className="skill-posts-grid">
-        {skillPosts.map(post => (
-          <div key={post.id} className="skill-post-card">
+        {skillPosts.map((post, index) => (
+          <div key={post.id} className="skill-post-card" style={{ 
+            border: "2px solid", 
+            borderColor: getPostColor(index),
+            borderRadius: "8px",
+            boxShadow: `0 4px 8px rgba(0, 0, 0, 0.1)`
+          }}>
             <div className="skill-post-content">
               <div className="post-header">
-                <h3 className="post-title">{post.title}</h3>
+                <h3 className="post-title" style={{ color: getPostColor(index) }}>
+                  {post.title}
+                </h3>
                 <div className="post-actions">
                   <button 
                     className="edit-btn"
@@ -137,8 +163,22 @@ function SkillPostList() {
               <p className="post-description">{truncateText(post.description)}</p>
               
               {post.description.length > 150 && (
-                <button className="read-more-btn">Read more</button>
+                <button className="read-more-btn" style={{ color: getPostColor(index) }}>
+                  Read more
+                </button>
               )}
+              
+              <div className="skill-summary">
+                <h4 style={{ color: getPostColor(index), fontSize: "14px", marginTop: "15px" }}>
+                  Skills Outline:
+                </h4>
+                <ul className="skills-list">
+                  {/* Create a placeholder outline based on the title */}
+                  <li>Core {post.title.split(' ')[0]} fundamentals</li>
+                  <li>Advanced techniques</li>
+                  <li>Practical applications</li>
+                </ul>
+              </div>
               
               <div className="post-meta">
                 <div className="post-time">

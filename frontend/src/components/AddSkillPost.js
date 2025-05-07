@@ -98,92 +98,94 @@ function AddSkillPost() {
   };
 
   return (
-    <div className="skill-post-container">
-      <div className="form-header">
-        <h2>Share Your Skill</h2>
-        <p>Share your expertise with the community</p>
-      </div>
-      
-      <div id="success-message" className="alert success">
-        Skill Post created successfully!
-      </div>
-      
-      <div id="error-message" className="alert error">
-        Failed to create skill post. Please try again.
-      </div>
-      
-      <form onSubmit={handleSubmit} className="skill-post-form">
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            name="title"
-            placeholder="What skill are you sharing?"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
+    <div className="skill-post-wrapper">
+      <div className="skill-post-container">
+        <div className="form-header">
+          <h2>Share Your Skill</h2>
+          <p>Share your expertise with the community</p>
         </div>
         
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Share details about your skill, experience level, and what you can teach others..."
-            value={formData.description}
-            onChange={handleInputChange}
-            rows="5"
-            required
-          />
+        <div id="success-message" className="alert success">
+          Skill Post created successfully!
         </div>
-
-        <div className="form-group">
-          <label>Upload Images</label>
-          <div className="file-upload">
+        
+        <div id="error-message" className="alert error">
+          Failed to create skill post. Please try again.
+        </div>
+        
+        <form onSubmit={handleSubmit} className="skill-post-form">
+          <div className="form-group">
+            <label htmlFor="title">Title</label>
             <input
-              type="file"
-              accept="image/*"
-              multiple
-              id="file-input"
-              onChange={handleFileChange}
-              className="file-input"
+              id="title"
+              name="title"
+              placeholder="What skill are you sharing?"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
             />
-            <label htmlFor="file-input" className="file-label">
-              <i className="upload-icon">📷</i>
-              <span>Choose images</span>
-            </label>
           </div>
           
-          {imagePreviews.length > 0 && (
-            <div className="image-previews">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="preview-container">
-                  <img 
-                    src={preview} 
-                    alt={`Preview ${index+1}`} 
-                    className="image-preview" 
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          
-          {imagePreviews.length > 0 && (
-            <p className="file-info">{imageFiles.length} image(s) selected</p>
-          )}
-        </div>
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Share details about your skill, experience level, and what you can teach others..."
+              value={formData.description}
+              onChange={handleInputChange}
+              rows="5"
+              required
+            />
+          </div>
 
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Posting...' : 'Post Skill'}
-          </button>
-        </div>
-      </form>
+          <div className="form-group">
+            <label>Upload Images</label>
+            <div className="file-upload">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                id="file-input"
+                onChange={handleFileChange}
+                className="file-input"
+              />
+              <label htmlFor="file-input" className="file-label">
+                <i className="upload-icon">📷</i>
+                <span>Choose images</span>
+              </label>
+            </div>
+            
+            {imagePreviews.length > 0 && (
+              <div className="image-previews">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="preview-container">
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index+1}`} 
+                      className="image-preview" 
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {imagePreviews.length > 0 && (
+              <p className="file-info">{imageFiles.length} image(s) selected</p>
+            )}
+          </div>
+
+          <div className="form-actions">
+            <button 
+              type="submit" 
+              className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Posting...' : 'Post Skill'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
