@@ -232,7 +232,7 @@ function CourseTable() {
                     </td>
                     <td className="actions">
                       <button 
-                        className="edit-btn" 
+                        className="courseedit-btn" 
                         onClick={(e) => handleUpdate(course, e)}
                         aria-label="Edit course"
                       >
@@ -242,7 +242,7 @@ function CourseTable() {
                         </svg>
                       </button>
                       <button 
-                        className="delete-btn" 
+                        className="coursedelete-btn" 
                         onClick={(e) => deleteCourse(course.id, e)}
                         aria-label="Delete course"
                       >
