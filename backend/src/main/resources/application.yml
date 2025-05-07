@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_skill_social
     username: root
-    password: tharusha2001
+    password: root
 
   jpa:   
     show-sql: true
