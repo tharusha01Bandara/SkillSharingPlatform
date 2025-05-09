@@ -7,7 +7,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem 0;
-  background-image: url('../img/skillpost.jpg');
+  background-color: #e6f2ff;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -16,7 +16,7 @@
 .skill-post-container {
   width: 90%;
   max-width: 800px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color:#e6f2ff;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   padding: 2.5rem;

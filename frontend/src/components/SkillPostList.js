@@ -144,7 +144,7 @@ function SkillPostList() {
                     onClick={() => handleEdit(post.id)}
                     aria-label="Edit skill post"
                   >
-                    <i className="edit-icon">✏️</i>
+                    <i className="edit-icon">Edit</i>
                   </button>
                   <button 
                     className={`delete-btn ${deleteLoading === post.id ? 'loading' : ''}`}
@@ -154,7 +154,7 @@ function SkillPostList() {
                   >
                     {deleteLoading === post.id ? 
                       <div className="btn-spinner"></div> : 
-                      <i className="delete-icon">🗑️</i>
+                      <i className="delete-icon">Delete</i>
                     }
                   </button>
                 </div>
