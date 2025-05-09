@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
+// Replace useNavigate with useHistory for older versions of react-router-dom
+import { useHistory } from "react-router-dom";
 import "../styles/SkillPostList.css";
 
 function SkillPostList() {
+  // Replace useNavigate with useHistory
+  const history = useHistory();
   const [skillPosts, setSkillPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [expandedPost, setExpandedPost] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
 
   // Modern gradient backgrounds for cards
   const cardGradients = [
@@ -75,21 +80,108 @@ function SkillPostList() {
     }
   };
 
+  // Function to show notification
+  const showNotification = (message, type) => {
+    setNotification({
+      show: true,
+      message,
+      type
+    });
+    
+    // Auto-hide notification after 4 seconds
+    setTimeout(() => {
+      setNotification({ show: false, message: "", type: "" });
+    }, 4000);
+  };
+
   // Function to handle editing a skill post
   const handleEdit = (e, postId) => {
     e.stopPropagation();
-    // You can navigate to edit page or open a modal
-    alert(`Edit post with ID: ${postId}`);
     
-    // Alternatively, you could navigate using React Router:
-    // history.push(`/edit-skill-post/${postId}`);
-    // or window.location.href = `/edit-skill-post/${postId}`;
+    // Find the post to be edited
+    const postToEdit = skillPosts.find(post => post.id === postId);
+    
+    if (postToEdit) {
+      // Navigate to edit page with post data using history.push instead of navigate
+      history.push(`/edit-skill-post/${postId}`, { post: postToEdit });
+    } else {
+      showNotification("Error finding post details", "error");
+    }
   };
 
   // Function to handle deleting a skill post
   const handleDelete = async (e, postId) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this skill post?")) {
+    
+    // Get the post title for the confirmation message
+    const postToDelete = skillPosts.find(post => post.id === postId);
+    const title = postToDelete ? postToDelete.title : "this post";
+    
+    // Create a more attractive delete modal
+    const confirmDelete = () => {
+      return new Promise((resolve) => {
+        // Create modal elements
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'delete-modal-overlay';
+        
+        const modalContent = document.createElement('div');
+        modalContent.className = 'delete-modal';
+        
+        modalContent.innerHTML = `
+          <div class="delete-modal-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3>Confirm Deletion</h3>
+          </div>
+          <p>Are you sure you want to delete <strong>"${title}"</strong>?</p>
+          <p class="delete-warning">This action cannot be undone.</p>
+          <div class="delete-modal-actions">
+            <button class="cancel-btn">Cancel</button>
+            <button class="confirm-btn">Delete</button>
+          </div>
+        `;
+        
+        modalOverlay.appendChild(modalContent);
+        document.body.appendChild(modalOverlay);
+        
+        // Add animation class after a small delay for transition effect
+        setTimeout(() => {
+          modalOverlay.classList.add('visible');
+          modalContent.classList.add('visible');
+        }, 10);
+        
+        // Add event listeners
+        const cancelBtn = modalContent.querySelector('.cancel-btn');
+        const confirmBtn = modalContent.querySelector('.confirm-btn');
+        
+        cancelBtn.addEventListener('click', () => {
+          closeModal(false);
+        });
+        
+        confirmBtn.addEventListener('click', () => {
+          closeModal(true);
+        });
+        
+        // Close modal function
+        const closeModal = (confirmed) => {
+          modalOverlay.classList.remove('visible');
+          modalContent.classList.remove('visible');
+          
+          setTimeout(() => {
+            document.body.removeChild(modalOverlay);
+            resolve(confirmed);
+          }, 300); // Wait for animation to complete
+        };
+      });
+    };
+
+    // Show the custom delete modal
+    const confirmed = await confirmDelete();
+    
+    if (confirmed) {
       try {
         setDeleteLoading(postId);
         await axios.delete(`${API_BASE_URL}/skillposts/${postId}`);
@@ -97,11 +189,11 @@ function SkillPostList() {
         // Remove the deleted post from state
         setSkillPosts(skillPosts.filter(post => post.id !== postId));
         
-        // Show success message
-        alert("Skill post deleted successfully!");
+        // Show success notification
+        showNotification(`"${title}" was successfully deleted.`, "success");
       } catch (err) {
         console.error("Failed to delete skill post", err);
-        alert("Failed to delete skill post. Please try again.");
+        showNotification("Failed to delete the skill post. Please try again.", "error");
       } finally {
         setDeleteLoading(null);
       }
@@ -116,6 +208,36 @@ function SkillPostList() {
 
   return (
     <div className="skill-posts-container">
+      {/* Notification component */}
+      {notification.show && (
+        <div className={`notification ${notification.type}`}>
+          <div className="notification-content">
+            {notification.type === "success" ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            )}
+            <span>{notification.message}</span>
+          </div>
+          <button 
+            className="notification-close"
+            onClick={() => setNotification({ show: false, message: "", type: "" })}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      )}
+      
       <div className="skill-posts-header">
         <h2>Explore Skill Posts</h2>
         <p className="subtitle">Discover skills and expertise shared by the community</p>
@@ -149,7 +271,12 @@ function SkillPostList() {
           </svg>
           <h3>No Skill Posts Yet</h3>
           <p>Be the first to share your skills with the community!</p>
-          <button className="create-post-btn">Create Skill Post</button>
+          <button 
+            className="create-post-btn" 
+            onClick={() => history.push('/create-skill-post')}
+          >
+            Create Skill Post
+          </button>
         </div>
       )}
 
