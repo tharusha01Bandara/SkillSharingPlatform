@@ -1,0 +1,138 @@
+/* AddCourseUnique.css */
+
+.add-course-unique-container {
+  min-height: 100vh;
+  background: 
+    linear-gradient(to bottom right, rgba(12, 74, 93, 0.9), rgba(184, 204, 206, 0.9)),
+    url('./images/course-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+
+.unique-form-card {
+  width: 100%;
+  max-width: 750px;
+  padding: 40px;
+  border-radius: 20px;
+  background: #e7fffb;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.unique-form-title {
+  font-size: 28px;
+  color: #1eb2a6;
+  margin-bottom: 8px;
+}
+
+.unique-form-subtitle {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.unique-form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.unique-form-group {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.unique-form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.unique-form-group input,
+.unique-form-group textarea,
+.unique-form-group select {
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
+}
+
+.unique-form-group input:focus,
+.unique-form-group textarea:focus,
+.unique-form-group select:focus {
+  border-color: #1eb2a6;
+  outline: none;
+}
+
+.unique-form-group textarea {
+  resize: vertical;
+}
+
+.unique-file-upload {
+  position: relative;
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border: 2px dashed #1eb2a6;
+  padding: 12px;
+  border-radius: 10px;
+  color: #555;
+  transition: 0.3s;
+}
+
+.upload-label:hover {
+  background: #f9f9f9;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.unique-submit-btn {
+  background-color: #1eb2a6;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.unique-submit-btn:hover {
+  background-color: #159a91;
+}
+
+.unique-notification {
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.unique-notification.success {
+  background-color: #e6fffa;
+  color: #00796b;
+  border: 1px solid #1eb2a6;
+}
+
+.unique-notification.error {
+  background-color: #ffe5e5;
+  color: #d32f2f;
+  border: 1px solid #ff6f61;
+}

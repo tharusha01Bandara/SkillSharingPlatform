@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
+import "./AddCourse.css";
 
 function AddCourse() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,9 @@ function AddCourse() {
   });
 
   const [videoFile, setVideoFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [fileName, setFileName] = useState("");
 
   const handleInputChange = (e) => {
     setFormData({
@@ -23,20 +27,24 @@ function AddCourse() {
   };
 
   const handleFileChange = (e) => {
-    setVideoFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setVideoFile(file);
+      setFileName(file.name);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       let videoUrl = "";
 
-      // 1. Upload video to Cloudinary
       if (videoFile) {
         const videoForm = new FormData();
         videoForm.append("file", videoFile);
-        videoForm.append("upload_preset", "ml_default"); // You may need to change this preset
+        videoForm.append("upload_preset", "ml_default");
         videoForm.append("resource_type", "video");
 
         const uploadRes = await axios.post(
@@ -47,41 +55,110 @@ function AddCourse() {
         videoUrl = uploadRes.data.secure_url;
       }
 
-      // 2. Add videoUrl to formData
       const updatedFormData = {
         ...formData,
         videoUrl: videoUrl
       };
 
-      // 3. Save course info
       const res = await axios.post(`${API_BASE_URL}/course`, updatedFormData, {
         headers: {
           "Content-Type": "application/json"
         }
       });
 
-      console.log(res.data);
-      alert("Course and video uploaded successfully!");
+      setNotification({ show: true, message: "Course and video uploaded successfully!", type: "success" });
+
+      setFormData({
+        courseName: "",
+        lecturerId: "",
+        yearLevel: "",
+        courseCode: "",
+        description: "",
+        enrollmentKey: "",
+        videoUrl: ""
+      });
+      setVideoFile(null);
+      setFileName("");
+
+      setTimeout(() => {
+        setNotification({ show: false, message: "", type: "" });
+      }, 5000);
+
     } catch (error) {
-      console.error("Error uploading course:", error);
-      alert("Failed to upload course or video!");
+      setNotification({ show: true, message: "Failed to upload course or video!", type: "error" });
+      setTimeout(() => {
+        setNotification({ show: false, message: "", type: "" });
+      }, 5000);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>Add Course</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="courseName" placeholder="Course Name" onChange={handleInputChange} required />
-        <input name="lecturerId" placeholder="Lecturer Id" onChange={handleInputChange} required />
-        <input name="yearLevel" placeholder="Year Level" onChange={handleInputChange} required />
-        <input name="courseCode" placeholder="Course Code" onChange={handleInputChange} required />
-        <input name="description" placeholder="Description" onChange={handleInputChange} required />
-        <input name="enrollmentKey" placeholder="Enrollment Key" onChange={handleInputChange} required />
+    <div className="add-course-unique-container">
+      <div className="unique-form-card">
+        <h2 className="unique-form-title">📘 Add Course</h2>
+        <p className="unique-form-subtitle">Provide details to list your course</p>
 
-        <input type="file" accept="video/*" onChange={handleFileChange} required />
-        <button type="submit">Submit</button>
-      </form>
+        {notification.show && (
+          <div className={`unique-notification ${notification.type}`}>
+            {notification.message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="unique-form-grid">
+            <div className="unique-form-group">
+              <label htmlFor="courseName">Course Name</label>
+              <input id="courseName" name="courseName" value={formData.courseName} onChange={handleInputChange} required />
+            </div>
+            <div className="unique-form-group">
+              <label htmlFor="courseCode">Course Code</label>
+              <input id="courseCode" name="courseCode" value={formData.courseCode} onChange={handleInputChange} required />
+            </div>
+            <div className="unique-form-group">
+              <label htmlFor="lecturerId">Lecturer ID</label>
+              <input id="lecturerId" name="lecturerId" value={formData.lecturerId} onChange={handleInputChange} required />
+            </div>
+            <div className="unique-form-group">
+              <label htmlFor="yearLevel">Year Level</label>
+              <select id="yearLevel" name="yearLevel" value={formData.yearLevel} onChange={handleInputChange} required>
+                <option value="">Select Year</option>
+                <option value="1">First Year</option>
+                <option value="2">Second Year</option>
+                <option value="3">Third Year</option>
+                <option value="4">Fourth Year</option>
+                <option value="postgrad">Postgraduate</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="unique-form-group">
+            <label htmlFor="description">Description</label>
+            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} rows="4" required />
+          </div>
+
+          <div className="unique-form-group">
+            <label htmlFor="enrollmentKey">Enrollment Key</label>
+            <input id="enrollmentKey" name="enrollmentKey" value={formData.enrollmentKey} onChange={handleInputChange} required />
+          </div>
+
+          <div className="unique-form-group">
+            <label>Course Video</label>
+            <div className="unique-file-upload">
+              <label htmlFor="video-upload" className="upload-label">
+                <span className="upload-icon">📤</span>
+                <span className="upload-text">{fileName || "Upload video"}</span>
+              </label>
+              <input type="file" id="video-upload" accept="video/*" onChange={handleFileChange} required />
+            </div>
+          </div>
+
+          <button type="submit" className="unique-submit-btn" disabled={loading}>
+            {loading ? "Uploading..." : "Create Course"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
