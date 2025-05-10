@@ -1,6 +1,22 @@
 /* SkillPostList.css */
 
 .skill-posts-container {
+  background-color: #e6f2ff;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Ensures background covers full height */
+  padding: 20px;
+}
+
+.skill-posts-container {
+  background-color: #e6f2ff; /* light blue */
+  min-height: 100vh;
+  padding: 20px;
+}
+
+
+.skill-posts-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 30px 20px;
@@ -211,6 +227,7 @@
       transform: rotate(360deg);
     }
   }
+  
   
   /* Error state */
   .error-message {
