@@ -21,12 +21,10 @@ import './App.css';
 import AddCourse from '../components/AddCourse';
 import CourseList from '../components/CourseList';
 import CourseTable from '../components/CourseTable';
-import UpdateCourse from '../components/UpdateCourse'; //
+import UpdateCourse from '../components/UpdateCourse';
 import AddSkillPost from '../components/AddSkillPost';
 import SkillPostList from '../components/SkillPostList';
-
-
-
+import SocialMediaDashboard from '../components/SocialMediaDashboard';
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +34,7 @@ class App extends Component {
       currentUser: null,
       loading: true
     }
-
+    
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -52,8 +50,8 @@ class App extends Component {
     }).catch(error => {
       this.setState({
         loading: false
-      });  
-    });    
+      });
+    });
   }
 
   handleLogout() {
@@ -81,30 +79,41 @@ class App extends Component {
         </div>
         <div className="app-body">
           <Switch>
-            <Route exact path="/" component={Home}></Route> 
+            <Route exact path="/" component={Home}></Route>
+            
+            {/* Dashboard Route */}
+            <PrivateRoute 
+              path="/dashboard" 
+              authenticated={this.state.authenticated} 
+              component={SocialMediaDashboard}
+            ></PrivateRoute>
+            
             <Route exact path="/ADDcourse" component={AddCourse} />
             <Route path="/courses" component={CourseList}></Route>
             <Route path="/coursesTable" component={CourseTable}></Route>
-        
             <Route path="/update-course/:id" component={UpdateCourse} />
-
+            
             <Route exact path="/AddSkillPost" component={AddSkillPost} />
             <Route exact path="/SkillPostList" component={SkillPostList} />
-
-      
-          
-            <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-              component={Profile}></PrivateRoute>
+            
+            <PrivateRoute 
+              path="/profile" 
+              authenticated={this.state.authenticated} 
+              currentUser={this.state.currentUser}
+              component={Profile}
+            ></PrivateRoute>
+            
             <Route path="/login"
               render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
             <Route path="/signup"
               render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}></Route>
-            <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
+            <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>
+            
             <Route component={NotFound}></Route>
           </Switch>
         </div>
         <Alert stack={{limit: 3}} 
-          timeout = {3000}
+          timeout={3000}
           position='top-right' effect='slide' offset={65} />
       </div>
     );
