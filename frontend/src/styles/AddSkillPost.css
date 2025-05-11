@@ -109,24 +109,30 @@
 }
 
 .image-previews {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
   margin-top: 1rem;
 }
 
 .preview-container {
-  width: 100px;
-  height: 100px;
-  border-radius: 6px;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .image-preview {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.preview-container:hover .image-preview {
+  transform: scale(1.05);
 }
 
 .file-info {
@@ -202,4 +208,71 @@
     width: 80px;
     height: 80px;
   }
+}
+
+.add-skill-post-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-skill-post-container {
+  flex: 1;
+  display: flex;
+  max-width: 1100px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+.add-skill-form-column {
+  flex: 1;
+  padding: 2.5rem 2rem;
+  background: #f6faff;
+}
+
+.add-skill-info-column {
+  flex: 1;
+  background: #20bfa9;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 2rem;
+}
+
+.newsletter-box {
+  background: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.newsletter-form {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.newsletter-form button {
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  background: #fff;
+  color: #20bfa9;
+  font-weight: bold;
+  cursor: pointer;
 }
