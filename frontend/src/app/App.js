@@ -32,6 +32,8 @@ import CourseTable from '../components/CourseTable';
 import UpdateCourse from '../components/UpdateCourse';
 import AddSkillPost from '../components/AddSkillPost';
 import SkillPostList from '../components/SkillPostList';
+import SkillPostDetail from '../components/SkillPostDetail';
+import EditSkillPost from '../components/EditSkillPost';
 
 class App extends Component {
   constructor(props) {
@@ -112,6 +114,8 @@ class App extends Component {
             {/* Skill Posts */}
             <Route exact path="/AddSkillPost" component={AddSkillPost} />
             <Route exact path="/SkillPostList" component={SkillPostList} />
+            <Route exact path="/skill-post/:postId" component={SkillPostDetail} />
+            <Route exact path="/edit-skill-post/:postId" component={EditSkillPost} />
 
             {/* Authenticated User Routes */}
             <PrivateRoute
