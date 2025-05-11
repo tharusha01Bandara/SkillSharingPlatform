@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../constants";
 // Replace useNavigate with useHistory for older versions of react-router-dom
 import { useHistory } from "react-router-dom";
 import "../styles/SkillPostList.css";
+import Footer from '../home/common/footer/Footer';
 
 function SkillPostList() {
   // Replace useNavigate with useHistory
@@ -428,6 +429,7 @@ function SkillPostList() {
           </svg>
         </button>
       </div>
+      <Footer />
     </div>
   );
 }
