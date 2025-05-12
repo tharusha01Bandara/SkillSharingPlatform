@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useHistory } from 'react-router-dom';
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import "../styles/LearningPlanForm.css";
@@ -20,17 +21,35 @@ function LearningPlanForm({ planToEdit, onSubmitSuccess, onCancel }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  useEffect(() => {
-    if (planToEdit) {
+  // useEffect(() => {
+  //   if (planToEdit) {
+  //     setFormData({
+  //       title: planToEdit.title || "",
+  //       description: planToEdit.description || "",
+  //       topics: planToEdit.topics || "",
+  //       resources: planToEdit.resources || "",
+  //       timeline: planToEdit.timeline || ""
+  //     });
+  //   }
+  // }, [planToEdit]);
+
+const { id } = useParams();
+const history = useHistory();
+// history.push('/LearningPlanList');
+
+useEffect(() => {
+  if (id) {
+    axios.get(`${API_BASE_URL}/learning-plans/${id}`).then(res => {
       setFormData({
-        title: planToEdit.title || "",
-        description: planToEdit.description || "",
-        topics: planToEdit.topics || "",
-        resources: planToEdit.resources || "",
-        timeline: planToEdit.timeline || ""
+        title: res.data.title,
+        description: res.data.description,
+        topics: res.data.topics,
+        resources: res.data.resources,
+        timeline: res.data.timeline
       });
-    }
-  }, [planToEdit]);
+    });
+  }
+}, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,46 +65,62 @@ function LearningPlanForm({ planToEdit, onSubmitSuccess, onCancel }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) return;
+
+  //   setLoading(true);
+  //   setShowSuccess(false);
+  //   setShowError(false);
+    
+  //   try {
+  //     if (planToEdit) {
+  //       await updatePlan(planToEdit.id, formData);
+  //     } else {
+  //       await createPlan(formData);
+  //     }
+
+  //     setShowSuccess(true);
+      
+  //     // Reset form if creating new plan
+  //     if (!planToEdit) {
+  //       setFormData({
+  //         title: "",
+  //         description: "",
+  //         topics: "",
+  //         resources: "",
+  //         timeline: ""
+  //       });
+  //     }
+      
+  //     if (onSubmitSuccess) {
+  //       // Give time for success message to be seen
+  //       setTimeout(() => {
+  //         onSubmitSuccess();
+  //       }, 1500);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving learning plan:", error);
+  //     setShowError(true);
+  //     setErrors({ submit: "Failed to save learning plan. Please try again." });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setShowSuccess(false);
-    setShowError(false);
-    
+    // ...validation
     try {
-      if (planToEdit) {
-        await updatePlan(planToEdit.id, formData);
+      if (id) {
+        await updatePlan(id, formData);
       } else {
         await createPlan(formData);
       }
-
       setShowSuccess(true);
-      
-      // Reset form if creating new plan
-      if (!planToEdit) {
-        setFormData({
-          title: "",
-          description: "",
-          topics: "",
-          resources: "",
-          timeline: ""
-        });
-      }
-      
-      if (onSubmitSuccess) {
-        // Give time for success message to be seen
-        setTimeout(() => {
-          onSubmitSuccess();
-        }, 1500);
-      }
-    } catch (error) {
-      console.error("Error saving learning plan:", error);
+      setTimeout(() => history.push("/LearningPlanList"), 1500);
+    } catch (err) {
       setShowError(true);
-      setErrors({ submit: "Failed to save learning plan. Please try again." });
-    } finally {
-      setLoading(false);
     }
   };
 
