@@ -33,6 +33,10 @@ import UpdateCourse from '../components/UpdateCourse';
 import AddSkillPost from '../components/AddSkillPost';
 import SkillPostList from '../components/SkillPostList';
 
+import LearningPlanList from '../components/LearningPlanList';
+import LearningPlanForm from '../components/LearningPlanForm';
+import LearningPlanCard from '../components/LearningPlanCard';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -112,6 +116,13 @@ class App extends Component {
             {/* Skill Posts */}
             <Route exact path="/AddSkillPost" component={AddSkillPost} />
             <Route exact path="/SkillPostList" component={SkillPostList} />
+
+            {/* Learning Plan */}
+            <Route exact path="/LearningPlanForm" component={LearningPlanForm} />
+            <Route exact path="/LearningPlanCard" component={LearningPlanCard} />
+            <Route exact path="/LearningPlanList" component={LearningPlanList} />
+            <Route exact path="/create-learning-plan" element={<LearningPlanForm />} />
+            <Route exact path="/edit-learning-plan/:id" element={<LearningPlanForm />} />
 
             {/* Authenticated User Routes */}
             <PrivateRoute
