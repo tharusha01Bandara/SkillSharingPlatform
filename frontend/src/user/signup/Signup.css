@@ -1,55 +1,214 @@
 .signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f8f8;
+    padding: 20px;
+}
+
+.auth-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.auth-form {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.auth-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.auth-promo {
+    flex: 1;
+    background-image: url('../../img/student-image.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-promo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(21, 170, 151, 0.8);
+}
+
+.promo-content {
+    position: relative;
+    color: white;
     text-align: center;
+    padding: 20px;
+    max-width: 80%;
 }
 
-
-.signup-content {
-    background: #fff;
-    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-    border-radius: 2px;
-    width: 500px;
-    display: inline-block;
-    margin-top: 30px;
-    vertical-align: middle;
-    position: relative;    
-    padding: 35px;
+.promo-content h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
 }
 
-.social-btn {
-    margin-bottom: 15px;
-    font-weight: 400;
+.promo-content p {
+    margin-bottom: 30px;
     font-size: 16px;
 }
 
+.explore-btn {
+    background-color: white;
+    color: #15aa97;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.explore-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.social-signup {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    transition: all 0.3s;
+}
+
+.social-btn:hover {
+    background-color: #f5f5f5;
+}
+
 .social-btn img {
-    height: 32px;
-    float: left;
-    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
 }
 
-.social-btn.google {
-    margin-top: 7px;
+.or-separator {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
 }
 
-.social-btn.facebook img {
-    height: 24px;
-    margin-left: 3px;
+.or-separator::before,
+.or-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
 }
 
-.social-btn.github img {
-    height: 24px;
-    margin-left: 3px;
+.or-text {
+    padding: 0 15px;
+    color: #888;
 }
 
-.login-link {
-    color: rgba(0, 0, 0, 0.65);
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 14px;
 }
 
-.signup-title {
-    font-size: 1.5em;
+.password-field {
+    position: relative;
+}
+
+.forgot-password {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 14px;
+}
+
+.forgot-password a {
+    color: #4285f4;
+    text-decoration: none;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
     font-weight: 500;
-    margin-top: 0;
-    margin-bottom: 30px;
-    color: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #3367d6;
+}
+
+.auth-footer {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.login-link a {
+    color: #4285f4;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .auth-wrapper {
+        flex-direction: column;
+    }
+    
+    .auth-promo {
+        min-height: 200px;
+    }
 }

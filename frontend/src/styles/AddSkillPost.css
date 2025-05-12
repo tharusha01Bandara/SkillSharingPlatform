@@ -1,202 +1,278 @@
 /* AddSkillPost.css */
 
+.skill-post-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+  background-color: #e6f2ff;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
 .skill-post-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-header {
-    margin-bottom: 25px;
-    text-align: center;
+  width: 90%;
+  max-width: 800px;
+  background-color:#e6f2ff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 2.5rem;
+  margin: 2rem auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.skill-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.file-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  border: 1px dashed #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.file-label:hover {
+  background-color: #e8e8e8;
+  border-color: #888;
+}
+
+.upload-icon {
+  font-size: 1.2rem;
+}
+
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 1rem;
+}
+
+.preview-container {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.preview-container:hover .image-preview {
+  transform: scale(1.05);
+}
+
+.file-info {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.submit-button {
+  padding: 12px 30px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #3a7bcb;
+}
+
+.submit-button.submitting {
+  background-color: #7a7a7a;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+  display: none;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .skill-post-container {
+    padding: 1.5rem;
   }
   
   .form-header h2 {
-    font-size: 28px;
-    color: #333;
-    margin-bottom: 8px;
-    font-weight: 600;
+    font-size: 1.5rem;
   }
-  
-  .form-header p {
-    color: #666;
-    font-size: 16px;
-  }
-  
-  .skill-post-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .form-group label {
-    font-weight: 500;
-    color: #333;
-    font-size: 15px;
-  }
-  
-  input, textarea {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-  }
-  
-  textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-  
-  .file-upload {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-  
-  .file-input {
-    position: absolute;
-    left: -9999px;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .file-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 15px;
-    background-color: #f8f9fa;
-    border: 2px dashed #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #666;
-    font-weight: 500;
-    transition: all 0.3s;
-  }
-  
-  .file-label:hover {
-    background-color: #f0f2f5;
-    border-color: #3498db;
-    color: #3498db;
-  }
-  
-  .upload-icon {
-    font-size: 24px;
-  }
-  
-  .image-previews {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
+}
+
+@media (max-width: 480px) {
+  .skill-post-container {
+    padding: 1rem;
   }
   
   .preview-container {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%; /* Create square aspect ratio */
-    border-radius: 6px;
-    overflow: hidden;
-    background-color: #f8f9fa;
+    width: 80px;
+    height: 80px;
   }
-  
-  .image-preview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-  
-  .file-info {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-  }
-  
-  .submit-button {
-    background-color: #3498db;
-    color: white;
-    font-weight: 500;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .submit-button:hover {
-    background-color: #2980b9;
-  }
-  
-  .submit-button.submitting {
-    background-color: #95a5a6;
-    cursor: not-allowed;
-  }
-  
-  .alert {
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    display: none;
-  }
-  
-  .success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-  
-  .error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 600px) {
-    .skill-post-container {
-      padding: 20px;
-      border-radius: 8px;
-    }
-    
-    .form-header h2 {
-      font-size: 24px;
-    }
-    
-    .submit-button {
-      width: 100%;
-    }
-    
-    .image-previews {
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    }
-  }
+}
+
+.add-skill-post-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-skill-post-container {
+  flex: 1;
+  display: flex;
+  max-width: 1100px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+.add-skill-form-column {
+  flex: 1;
+  padding: 2.5rem 2rem;
+  background: #f6faff;
+}
+
+.add-skill-info-column {
+  flex: 1;
+  background: #20bfa9;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 2rem;
+}
+
+.newsletter-box {
+  background: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.newsletter-form {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.newsletter-form button {
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  background: #fff;
+  color: #20bfa9;
+  font-weight: bold;
+  cursor: pointer;
+}

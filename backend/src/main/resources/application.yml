@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/spring_skill_social   
+    url: jdbc:mysql://localhost:3306/spring_skill_social
     username: root
     password: root
 
