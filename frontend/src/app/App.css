@@ -161,3 +161,25 @@ p {
     height: 80vh;
   }
 }
+
+/* Custom styles beyond Tailwind CSS */
+
+/* Apply a smooth transition for hover effects */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Add a subtle hover effect to cards */
+.learning-plan-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom scrollbar for textareas */
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* border-radius: */
+}
