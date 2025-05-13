@@ -19,7 +19,10 @@ const Head = () => {
               <i className="fab fa-twitter icon"></i>
               <i className="fab fa-youtube icon"></i>
 
-            
+              {/* 👇 Login Button */}
+              <Link to="/login" className="login-button">
+                Login
+              </Link>
             </div>
           </div>
         </div>
