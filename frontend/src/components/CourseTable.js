@@ -117,7 +117,7 @@ function CourseTable() {
       {redirect}
       
       <div className="table-header">
-        <h1>Course Management</h1>
+        <h1>Courses Table</h1>
         <div className="table-actions">
           <div className="search-box">
             <input

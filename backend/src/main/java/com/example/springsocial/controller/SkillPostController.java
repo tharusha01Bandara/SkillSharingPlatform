@@ -49,6 +49,29 @@ public class SkillPostController {
         return skillPostRepository.findAll();
     }
 
+    // GET mapping to fetch a single skill post by ID
+    @GetMapping("/skillposts/{id}")
+    public ResponseEntity<SkillPost> getSkillPostById(@PathVariable Long id) {
+        return skillPostRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // // Fetch a single skill post by ID
+    // @GetMapping("/skillposts/{id}")
+    // public ResponseEntity<SkillPost> getSkillPostById(@PathVariable Long id) {
+    //     System.out.println("Fetching skill post with ID: " + id);
+    //     return skillPostRepository.findById(id)
+    //             .map(post -> {
+    //                 System.out.println("Found post: " + post.getTitle());
+    //                 return ResponseEntity.ok(post);
+    //             })
+    //             .orElseGet(() -> {
+    //                 System.out.println("No post found with ID: " + id);
+    //                 return ResponseEntity.notFound().build();
+    //             });
+    // }
+
     // Update an existing skill post
     @PutMapping("/skillposts/{id}")
     public SkillPost updateSkillPost(@PathVariable Long id, @RequestBody SkillPost updatedSkillPost) {
