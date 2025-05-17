@@ -49,8 +49,8 @@ body {
 .skill-posts-header {
   text-align: center;
   margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
   position: relative;
+  padding-bottom: 1rem;
 }
 
 .skill-posts-header h2 {
@@ -80,6 +80,36 @@ body {
   height: 4px;
   background: linear-gradient(90deg, var(--primary-color) 0%, #8a94ff 100%);
   border-radius: 2px;
+}
+
+.share-skill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.share-skill-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.share-skill-btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.share-skill-btn:hover svg {
+  transform: rotate(90deg);
 }
 
 /* Grid layout for posts */
