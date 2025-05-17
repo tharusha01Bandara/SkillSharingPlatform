@@ -112,7 +112,7 @@ class AppHeader extends Component {
             
             <div className="header-right">
               <div className="start">
-                <div className="button">Edu Bridge</div>
+                <div className="button">EduBridge</div>
               </div>
               
               {authenticated ? (
