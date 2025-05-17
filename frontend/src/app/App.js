@@ -27,7 +27,7 @@ import AddSkillPost from '../components/AddSkillPost';
 import SkillPostList from '../components/SkillPostList';
 import SkillPostDetail from '../components/SkillPostDetail';
 import EditSkillPost from '../components/EditSkillPost';
-
+import UserSearch from '../components/UserSearch';
 
 import Header from "../home/common/header/Header";
 import About from '../home/about/About';
@@ -122,6 +122,9 @@ render() {
           <Route exact path="/LearningPlanList" component={LearningPlanList} />
           <Route exact path="/create-learning-plan" component={LearningPlanForm} />
           <Route exact path="/edit-learning-plan/:id" component={LearningPlanForm} />
+
+          
+<Route exact path="/search-users" component={UserSearch} />
 
           {/* User Profile */}
           <PrivateRoute 

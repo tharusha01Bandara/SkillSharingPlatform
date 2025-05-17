@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/user")
@@ -19,7 +22,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ Get logged-in user profile
+    // ✅ Get current user
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
@@ -28,7 +31,7 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 
-    // ✅ Update logged-in user profile
+    // ✅ Update user profile
     @PutMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateCurrentUser(@CurrentUser UserPrincipal userPrincipal,
@@ -41,9 +44,92 @@ public class UserController {
                     user.setInterests(updateRequest.getInterests());
                     user.setLocation(updateRequest.getLocation());
                     user.setProfession(updateRequest.getProfession());
-                    userRepository.save(user);
-                    return ResponseEntity.ok(user);
+                    return ResponseEntity.ok(userRepository.save(user));
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+    }
+
+    // ✅ Follow a user
+    @PutMapping("/{id}/follow")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> followUser(@PathVariable Long id, @CurrentUser UserPrincipal currentUser) {
+        if (id.equals(currentUser.getId())) {
+            return ResponseEntity.badRequest().body("You cannot follow yourself.");
+        }
+
+        User me = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+
+        User target = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        if (!me.getFollowing().contains(target)) {
+            me.getFollowing().add(target);
+            target.getFollowers().add(me);  // explicitly maintain bidirectional relation
+        }
+
+        userRepository.save(me);
+        userRepository.save(target);
+
+        return ResponseEntity.ok("Followed user with ID: " + id);
+    }
+
+    // ✅ Unfollow a user
+    @PutMapping("/{id}/unfollow")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> unfollowUser(@PathVariable Long id, @CurrentUser UserPrincipal currentUser) {
+        if (id.equals(currentUser.getId())) {
+            return ResponseEntity.badRequest().body("You cannot unfollow yourself.");
+        }
+
+        User me = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+
+        User target = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        me.getFollowing().remove(target);
+        target.getFollowers().remove(me);
+
+        userRepository.save(me);
+        userRepository.save(target);
+
+        return ResponseEntity.ok("Unfollowed user with ID: " + id);
+    }
+
+    // ✅ Get followers count
+    @GetMapping("/{id}/followers/count")
+    public ResponseEntity<?> getFollowersCount(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return ResponseEntity.ok(user.getFollowers().size());
+    }
+
+    // ✅ Get following count
+    @GetMapping("/{id}/following/count")
+    public ResponseEntity<?> getFollowingCount(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return ResponseEntity.ok(user.getFollowing().size());
+    }
+
+    // ✅ Get following IDs
+    @GetMapping("/{id}/following-ids")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getFollowingIds(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        List<Long> ids = user.getFollowing()
+                .stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ids);
+    }
+
+    // ✅ Search users
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUsers(@RequestParam("q") String query) {
+        List<User> users = userRepository.findByNameContainingIgnoreCase(query);
+        return ResponseEntity.ok(users);
     }
 }

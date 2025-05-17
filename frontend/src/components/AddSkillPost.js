@@ -201,20 +201,8 @@ function AddSkillPost() {
             </div>
           </form>
         </div>
-        {/* Right: Newsletter/info/illustration */}
-        {/* <div className="add-skill-info-column">
-          <div className="newsletter-box">
-            <h3>Newsletter - Stay tune and get the latest update</h3>
-            <p>Far far away, behind the word mountains</p>
-            <form className="newsletter-form" onSubmit={e => e.preventDefault()}>
-              <input type="email" placeholder="Enter email address" />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
-        </div> */}
-      </div>
-      <Footer />
-    </div>
+     </div>
+  </div>
   );
 }
 
