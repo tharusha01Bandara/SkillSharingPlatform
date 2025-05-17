@@ -38,6 +38,7 @@ import EditSkillPost from '../components/EditSkillPost';
 import LearningPlanList from '../components/LearningPlanList';
 import LearningPlanForm from '../components/LearningPlanForm';
 import LearningPlanCard from '../components/LearningPlanCard';
+import EditLearningPlan from '../components/EditLearningPlan';
 
 class App extends Component {
   constructor(props) {
@@ -125,8 +126,8 @@ class App extends Component {
             <Route exact path="/LearningPlanForm" component={LearningPlanForm} />
             <Route exact path="/LearningPlanCard" component={LearningPlanCard} />
             <Route exact path="/LearningPlanList" component={LearningPlanList} />
-            <Route exact path="/create-learning-plan" element={<LearningPlanForm />} />
-            <Route exact path="/edit-learning-plan/:id" element={<LearningPlanForm />} />
+            <Route exact path="/create-learning-plan" component={LearningPlanForm} />
+            <Route exact path="/edit-learning-plan/:id" component={EditLearningPlan} />
 
             {/* Authenticated User Routes */}
             <PrivateRoute
