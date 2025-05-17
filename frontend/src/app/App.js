@@ -41,6 +41,7 @@ import Footer from '../home/common/footer/Footer';
 import LearningPlanList from '../components/LearningPlanList';
 import LearningPlanForm from '../components/LearningPlanForm';
 import LearningPlanCard from '../components/LearningPlanCard';
+import EditLearningPlan from '../components/EditLearningPlan';
 
 class App extends Component {
   constructor(props) {
@@ -104,15 +105,7 @@ class App extends Component {
       render={() => (
         <React.Fragment>
        
-          <Switch>
-          <Route exact path='/' component={Home} />
-          <Route exact path='/about' component={About} />
-          <Route exact path='/courses' component={CourseHome} />
-          <Route exact path='/team' component={Team} />
-          <Route exact path='/pricing' component={Pricing} />
-          <Route exact path='/journal' component={Blog} />
-          <Route exact path='/contact' component={Contact} />
-          </Switch>
+          
           <Footer />
           </React.Fragment>
       )}
