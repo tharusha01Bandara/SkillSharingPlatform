@@ -1,212 +1,124 @@
 import React, { Component } from 'react';
 import './Profile.css';
+import axios from 'axios';
+import { API_BASE_URL } from '../../constants';
 
 class Profile extends Component {
-    constructor(props) {
-        super(props);
-        console.log(props);
-        this.state = {
-            isEditing: false,
-            profile: {
-                name: this.props.currentUser.name || '',
-                email: this.props.currentUser.email || '',
-                bio: this.props.currentUser.bio || 'No bio available',
-                skills: this.props.currentUser.skills || [],
-                interests: this.props.currentUser.interests || [],
-                connections: this.props.currentUser.connections || 0,
-                posts: this.props.currentUser.posts || 0,
-                imageUrl: this.props.currentUser.imageUrl || ''
-            },
-            tempProfile: {}
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEditing: false,
+      profile: {
+        name: '',
+        email: '',
+        imageUrl: '',
+        bio: '',
+        skills: '',
+        interests: '',
+        location: '',
+        profession: ''
+      }
+    };
+  }
 
-    handleEdit = () => {
-        this.setState({ 
-            isEditing: true,
-            tempProfile: { ...this.state.profile }
+  componentDidMount() {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      axios.get('http://localhost:8080/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => {
+          this.setState({ profile: res.data });
+        })
+        .catch(err => {
+          console.error('Failed to fetch user:', err);
+            alert('Unauthorized. Please log in again.');
         });
+    } else {
+      alert('No token found. Please log in first.');
     }
+  }
 
-    handleSave = () => {
-        this.setState({ 
-            profile: { ...this.state.tempProfile },
-            isEditing: false 
-        });
-        // Here you would typically make an API call to update the profile
-        console.log('Profile updated:', this.state.tempProfile);
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState(prevState => ({
+      profile: {
+        ...prevState.profile,
+        [name]: value
+      }
+    }));
+  };
+
+  toggleEdit = () => {
+    this.setState(prevState => ({
+      isEditing: !prevState.isEditing
+    }));
+  };
+
+  handleSave = async () => {
+    try {
+       const token = localStorage.getItem('accessToken');
+      await axios.put('http://localhost:8080/user/me', this.state.profile, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      this.setState({ isEditing: false });
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update profile.');
     }
+  };
 
-    handleCancel = () => {
-        this.setState({ isEditing: false });
-    }
+  render() {
+    const { name, email, imageUrl, bio, skills, interests, location, profession } = this.state.profile;
+    const { isEditing } = this.state;
 
-    handleInputChange = (field, value) => {
-        this.setState({
-            tempProfile: {
-                ...this.state.tempProfile,
-                [field]: value
-            }
-        });
-    }
-
-    handleSkillsChange = (skills) => {
-        const skillsArray = skills.split(',').map(skill => skill.trim()).filter(skill => skill);
-        this.setState({
-            tempProfile: {
-                ...this.state.tempProfile,
-                skills: skillsArray
-            }
-        });
-    }
-
-    handleInterestsChange = (interests) => {
-        const interestsArray = interests.split(',').map(interest => interest.trim()).filter(interest => interest);
-        this.setState({
-            tempProfile: {
-                ...this.state.tempProfile,
-                interests: interestsArray
-            }
-        });
-    }
-
-    render() {
-        const { profile, isEditing, tempProfile } = this.state;
-        const currentProfile = isEditing ? tempProfile : profile;
-
-        return (
-            <div className="profile-container">
-                <div className="profile-header">
-                    <div className="profile-cover"></div>
-                    <div className="profile-main">
-                        <div className="profile-avatar-section">
-                            <div className="profile-avatar">
-                                {currentProfile.imageUrl ? (
-                                    <img src={currentProfile.imageUrl} alt={currentProfile.name} />
-                                ) : (
-                                    <div className="text-avatar">
-                                        <span>{currentProfile.name && currentProfile.name[0]}</span>
-                                    </div>
-                                )}
-                                {isEditing && (
-                                    <div className="avatar-upload">
-                                        <input
-                                            type="url"
-                                            placeholder="Image URL"
-                                            value={tempProfile.imageUrl || ''}
-                                            onChange={(e) => this.handleInputChange('imageUrl', e.target.value)}
-                                            className="edit-input"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                            
-                            <div className="profile-info">
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        value={tempProfile.name || ''}
-                                        onChange={(e) => this.handleInputChange('name', e.target.value)}
-                                        className="edit-input edit-name"
-                                        placeholder="Your name"
-                                    />
-                                ) : (
-                                    <h1 className="profile-name">{currentProfile.name}</h1>
-                                )}
-                                
-                                <p className="profile-email">{currentProfile.email}</p>
-                                <p className="profile-id">ID: {this.props.currentUser.id}</p>
-                                
-                                {isEditing ? (
-                                    <textarea
-                                        value={tempProfile.bio || ''}
-                                        onChange={(e) => this.handleInputChange('bio', e.target.value)}
-                                        className="edit-input edit-bio"
-                                        placeholder="Tell us about yourself..."
-                                        rows="3"
-                                    />
-                                ) : (
-                                    <p className="profile-bio">{currentProfile.bio}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="profile-actions">
-                            {isEditing ? (
-                                <div className="edit-actions">
-                                    <button onClick={this.handleSave} className="btn-save">Save</button>
-                                    <button onClick={this.handleCancel} className="btn-cancel">Cancel</button>
-                                </div>
-                            ) : (
-                                <button onClick={this.handleEdit} className="btn-edit">Edit Profile</button>
-                            )}
-                        </div>
-                    </div>
+    return (
+      <div className="profile-container">
+        <div className="container">
+          <div className="profile-info">
+            <div className="profile-avatar">
+              {imageUrl ? (
+                <img src={imageUrl} alt={name} />
+              ) : (
+                <div className="text-avatar">
+                  <span>{name && name[0]}</span>
                 </div>
-
-                <div className="profile-stats">
-                    <div className="stat-item">
-                        <span className="stat-number">{currentProfile.posts}</span>
-                        <span className="stat-label">Posts</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-number">{currentProfile.connections}</span>
-                        <span className="stat-label">Connections</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-number">{currentProfile.skills.length}</span>
-                        <span className="stat-label">Skills</span>
-                    </div>
-                </div>
-
-                <div className="profile-details">
-                    <div className="details-section">
-                        <h3>Skills</h3>
-                        {isEditing ? (
-                            <input
-                                type="text"
-                                value={tempProfile.skills ? tempProfile.skills.join(', ') : ''}
-                                onChange={(e) => this.handleSkillsChange(e.target.value)}
-                                className="edit-input"
-                                placeholder="Enter skills separated by commas"
-                            />
-                        ) : (
-                            <div className="tags-container">
-                                {currentProfile.skills.map((skill, index) => (
-                                    <span key={index} className="tag skill-tag">{skill}</span>
-                                ))}
-                                {currentProfile.skills.length === 0 && (
-                                    <p className="empty-state">No skills added yet</p>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="details-section">
-                        <h3>Interests</h3>
-                        {isEditing ? (
-                            <input
-                                type="text"
-                                value={tempProfile.interests ? tempProfile.interests.join(', ') : ''}
-                                onChange={(e) => this.handleInterestsChange(e.target.value)}
-                                className="edit-input"
-                                placeholder="Enter interests separated by commas"
-                            />
-                        ) : (
-                            <div className="tags-container">
-                                {currentProfile.interests.map((interest, index) => (
-                                    <span key={index} className="tag interest-tag">{interest}</span>
-                                ))}
-                                {currentProfile.interests.length === 0 && (
-                                    <p className="empty-state">No interests added yet</p>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
+              )}
             </div>
-        );
-    }
+
+            {isEditing ? (
+              <div className="profile-edit-form">
+                <input type="text" name="name" value={name} onChange={this.handleChange} placeholder="Name" />
+                <input type="text" name="bio" value={bio} onChange={this.handleChange} placeholder="Bio" />
+                <input type="text" name="skills" value={skills} onChange={this.handleChange} placeholder="Skills" />
+                <input type="text" name="interests" value={interests} onChange={this.handleChange} placeholder="Interests" />
+                <input type="text" name="location" value={location} onChange={this.handleChange} placeholder="Location" />
+                <input type="text" name="profession" value={profession} onChange={this.handleChange} placeholder="Profession" />
+                <button onClick={this.handleSave}>Save</button>
+              </div>
+            ) : (
+              <div className="profile-details">
+                <h2>{name}</h2>
+                <p className="profile-email">{email}</p>
+                <p><strong>Bio:</strong> {bio}</p>
+                <p><strong>Skills:</strong> {skills}</p>
+                <p><strong>Interests:</strong> {interests}</p>
+                <p><strong>Location:</strong> {location}</p>
+                <p><strong>Profession:</strong> {profession}</p>
+                <button onClick={this.toggleEdit}>Edit Profile</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Profile;

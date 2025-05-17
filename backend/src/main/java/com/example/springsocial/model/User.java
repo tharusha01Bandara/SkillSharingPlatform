@@ -1,24 +1,35 @@
 package com.example.springsocial.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+import java.util.List;
+import java.util.ArrayList;
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Email
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String imageUrl;
@@ -29,73 +40,99 @@ public class User {
     @JsonIgnore
     private String password;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private List<User> followers = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_following",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> following = new ArrayList<>();
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
     private String providerId;
 
-    public Long getId() {
-        return id;
-    }
+    // Additional Profile Fields
+    @Column(length = 500)
+    private String bio;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String skills;
 
-    public String getName() {
-        return name;
-    }
+    private String interests;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String location;
 
-    public String getEmail() {
-        return email;
-    }
+    private String profession;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    // Getters and Setters (if needed manually in addition to Lombok)
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+    public Long getId() { return id; }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public Boolean getEmailVerified() {
-        return emailVerified;
-    }
+    public String getName() { return name; }
 
-    public void setEmailVerified(Boolean emailVerified) {
-        this.emailVerified = emailVerified;
-    }
+    public void setName(String name) { this.name = name; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getEmail() { return email; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setEmail(String email) { this.email = email; }
 
-    public AuthProvider getProvider() {
-        return provider;
-    }
+    public String getImageUrl() { return imageUrl; }
 
-    public void setProvider(AuthProvider provider) {
-        this.provider = provider;
-    }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getProviderId() {
-        return providerId;
-    }
+    public Boolean getEmailVerified() { return emailVerified; }
 
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
-    }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public List<User> getFollowers() { return followers; }
+
+    public void setFollowers(List<User> followers) { this.followers = followers; }
+
+    public List<User> getFollowing() { return following; }
+
+    public void setFollowing(List<User> following) { this.following = following; }
+
+    public AuthProvider getProvider() { return provider; }
+
+    public void setProvider(AuthProvider provider) { this.provider = provider; }
+
+    public String getProviderId() { return providerId; }
+
+    public void setProviderId(String providerId) { this.providerId = providerId; }
+
+    public String getBio() { return bio; }
+
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getSkills() { return skills; }
+
+    public void setSkills(String skills) { this.skills = skills; }
+
+    public String getInterests() { return interests; }
+
+    public void setInterests(String interests) { this.interests = interests; }
+
+    public String getLocation() { return location; }
+
+    public void setLocation(String location) { this.location = location; }
+
+    public String getProfession() { return profession; }
+
+    public void setProfession(String profession) { this.profession = profession; }
 }
