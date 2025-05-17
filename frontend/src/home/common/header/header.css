@@ -13,8 +13,8 @@
 /*--------head------------*/
 /*--------header------------*/
 header {
-  background-color: rgba(255, 255, 255, 0.2);
-  margin: 0 30px;
+  background-color: rgb(18, 55, 64);
+  margin: 0 0px;
 }
 header .nav {
   display: flex !important;
@@ -34,11 +34,20 @@ header ul li a:hover {
   color: #1eb2a6;
 }
 .start {
-  background-color: #1eb2a6;
+  background-color: #dbfffc;
   padding: 30px 70px;
-  color: #fff;
+  color: #004044;
   clip-path: polygon(10% 0%, 100% 0, 100% 100%, 0% 100%);
+  
+  /* Font styling */
+font-family: 'Inter', 'Helvetica Neue', sans-serif;
+
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
+
 .toggle {
   display: none;
 }
