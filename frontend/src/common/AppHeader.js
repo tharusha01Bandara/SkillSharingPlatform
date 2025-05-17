@@ -104,15 +104,15 @@ class AppHeader extends Component {
               <li><NavLink to="/">Home</NavLink></li>
               <li><NavLink to="/courses">All Courses</NavLink></li>
               <li><NavLink to="/about">About</NavLink></li>
-              <li><NavLink to="/team">Team</NavLink></li>
-              <li><NavLink to="/pricing">Pricing</NavLink></li>
+              <li><NavLink to="/SkillPostList">Skill Post</NavLink></li>
+              <li><NavLink to="/LearningPlanList">Learning Plan</NavLink></li>
               <li><NavLink to="/journal">Journal</NavLink></li>
               <li><NavLink to="/contact">Contact</NavLink></li>
             </ul>
             
             <div className="header-right">
               <div className="start">
-                <div className="button">Edu Bridge</div>
+                <div className="button">EduBridge</div>
               </div>
               
               {authenticated ? (
