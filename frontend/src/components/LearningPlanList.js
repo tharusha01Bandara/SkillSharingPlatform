@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import "../styles/LearningPlanList.css";
 import { useHistory } from 'react-router-dom';
+import Footer from '../home/common/footer/Footer';
 
 function LearningPlanList() {
   const [learningPlans, setLearningPlans] = useState([]);
@@ -261,6 +262,7 @@ function LearningPlanList() {
           </div>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }
