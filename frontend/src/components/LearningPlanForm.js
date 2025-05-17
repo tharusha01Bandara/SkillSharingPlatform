@@ -3,6 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import "../styles/LearningPlanForm.css";
+import Footer from '../home/common/footer/Footer';
 
 const updatePlan = async (id, data) => axios.put(`${API_BASE_URL}/learning-plans/${id}`, data);
 const createPlan = async (data) => axios.post(`${API_BASE_URL}/learning-plans`, data);
@@ -125,9 +126,10 @@ useEffect(() => {
   };
 
   return (
+    <div>
     <div className="learning-plan-container">
       <div className="form-header">
-        <h2>{planToEdit ? "Edit Learning Plan" : "Create Learning Plan"}</h2>
+        <h2>{planToEdit ? "Post Learning Plan" : "Post Learning Plan"}</h2>
         <p>Plan your learning journey step by step</p>
       </div>
 
@@ -230,10 +232,12 @@ useEffect(() => {
             disabled={loading}
             className={`submit-button ${loading ? "submitting" : ""}`}
           >
-            {loading ? "Saving..." : planToEdit ? "Update Plan" : "Create Plan"}
+            {loading ? "Saving..." : planToEdit ? "Post Plan" : "Post Plan"}
           </button>
         </div>
       </form>
+    </div>
+    <Footer />
     </div>
   );
 }
