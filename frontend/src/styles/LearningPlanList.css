@@ -291,13 +291,14 @@
 }
 
 .edit-btn {
-  background-color: #f8f9fa;
-  color: #2c3e50;
+  background-color: #f0f9ff;
+  color: #3498db;
   border: 1px solid #e0e0e0;
 }
 
 .edit-btn:hover {
-  background-color: #e9ecef;
+  background-color: #e1f0fb;
+  transform: scale(1.1);
 }
 
 .delete-btn {
@@ -310,9 +311,15 @@
 }
 
 .delete-btn {
-  background: linear-gradient(135deg, #27ae60, #219653);
+  background: #fff5f5;
+  color: #e74c3c;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(46, 204, 113, 0.25);
+}
+
+.delete-btn:hover {
+  background-color: #ffe6e6;
+  transform: scale(1.1);
 }
 
 /* .enroll-icon {
