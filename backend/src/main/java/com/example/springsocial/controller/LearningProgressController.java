@@ -35,15 +35,19 @@ public class LearningProgressController {
     @Autowired
     private UserService userService;
     
+   
     @PostMapping
-    public ResponseEntity<LearningProgressDTO> createProgress(
-            @RequestBody LearningProgressDTO progressDTO
-            /*@AuthenticationPrincipal UserDetails userDetails*/) {
-        
-        Long userId = 1L;
+public ResponseEntity<?> createProgress(@RequestBody LearningProgressDTO progressDTO) {
+    Long userId = 1L;
+    try {
         LearningProgressDTO createdProgress = progressService.createProgress(progressDTO, userId);
         return new ResponseEntity<>(createdProgress, HttpStatus.CREATED);
+    } catch (Exception e) {
+        e.printStackTrace(); // Or use a logger
+        return new ResponseEntity<>("Internal Server Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
+
     
     @GetMapping
     public ResponseEntity<List<LearningProgressDTO>> getAllProgress(

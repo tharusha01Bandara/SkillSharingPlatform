@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import CommentSection from './CommentSection.js';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import api from '../services/api.js';
+import Header from './header.js';
+import '../styles/LearningProgress.css';
+
+// Lazy load the CommentSection component
+const LazyCommentSection = lazy(() => import('./CommentSection.js'));
 
 function LearningProgressItem({ progress, onEdit, onDelete }) {
   const [showComments, setShowComments] = useState(false);
   const [liked, setLiked] = useState(progress.currentUserLiked);
   const [likeCount, setLikeCount] = useState(progress.likeCount);
+  const [showForm, setShowForm] = useState(false);
+    const [currentProgress, setCurrentProgress] = useState(null);
 
   useEffect(() => {
     setLiked(progress.currentUserLiked);
@@ -14,6 +20,11 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
+  };
+
+  const handleNewProgressClick = () => {
+    setCurrentProgress(null);
+    setShowForm(true);
   };
 
   const handleToggleLike = async () => {
@@ -32,46 +43,64 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
     }
   };
 
+  const toggleComments = () => {
+    setShowComments(prevState => !prevState);
+  };
+
   return (
     <div className="card">
-      <h2>{progress.title}</h2>
-      <div className="meta-info">
-        Posted by {progress.user.username} on {formatDate(progress.createdAt)}
-        {progress.updatedAt !== progress.createdAt && 
-          ` (Updated: ${formatDate(progress.updatedAt)})`}
+      <div className="content-header">
+        {/* <Header onNewProgressClick={handleNewProgressClick} /> */}
+        <h2>{progress.title}</h2>
+        <div className="meta-info">
+          Posted by {progress.user.username} on {formatDate(progress.createdAt)}
+          {progress.updatedAt !== progress.createdAt && 
+            ` (Updated: ${formatDate(progress.updatedAt)})`}
+        </div>
+        
+        {progress.content && (
+          <div>
+            <strong>Content:</strong> {progress.tutorialCompleted}
+          </div>
+        )}
+        
+        {progress.tutorialCompleted && (
+          <div>
+            <strong>Tutorials Completed:</strong> {progress.tutorialCompleted}
+          </div>
+        )}
+        
+        {progress.skillsLearned && (
+          <div>
+            <strong>Skills Learned:</strong> {progress.skillsLearned}
+          </div>
+        )}
       </div>
       
-      <p>{progress.content}</p>
-      
-      {progress.tutorialCompleted && (
-        <div>
-          <strong>Tutorials Completed:</strong> {progress.tutorialCompleted}
-        </div>
-      )}
-      
-      {progress.skillsLearned && (
-        <div>
-          <strong>Skills Learned:</strong> {progress.skillsLearned}
-        </div>
-      )}
-      
-      <div className="likes">
+      <div className="action-buttons">
         <button 
-          className={liked ? 'liked' : ''} 
+          className={`like-button ${liked ? 'liked' : ''}`}
           onClick={handleToggleLike}
         >
           {liked ? 'Unlike' : 'Like'} ({likeCount})
         </button>
         
-        <button onClick={() => setShowComments(!showComments)}>
+        <button className="comment-button" onClick={toggleComments}>
           {showComments ? 'Hide Comments' : `Show Comments (${progress.commentCount})`}
         </button>
         
-        <button onClick={() => onEdit(progress)}>Edit</button>
-        <button className="delete" onClick={() => onDelete(progress.id)}>Delete</button>
+        <button className="edit-button" onClick={() => onEdit(progress)}>Edit</button>
+        <button className="delete-button" onClick={() => onDelete(progress.id)}>Delete</button>
       </div>
       
-      {showComments && <CommentSection progressId={progress.id} />}
+      {/* Comments section with proper rendering control */}
+      {showComments && (
+        <div className="comments-container">
+          <Suspense fallback={<div>Loading comments...</div>}>
+            <LazyCommentSection progressId={progress.id} />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 }

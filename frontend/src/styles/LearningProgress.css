@@ -1,0 +1,158 @@
+:root {
+  --primary: #5fb3b3; /* soft teal */
+  --secondary: #a88fc5; /* pastel purple */
+  --accent: #ffb395; /* light coral */
+  --background: #fdfcfa; /* creamy white */
+  --text: #333;
+  --text-secondary: #777;
+  --card-bg: #ffffff;
+  --border-radius: 12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: var(--shadow);
+}
+
+.hero-title {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.hero-description {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* Cards */
+.card {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 20px 0;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Buttons */
+button,
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover,
+.btn-primary:hover {
+  background: #ff9773;
+  transform: translateY(-2px);
+}
+
+button:active,
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.edit-button {
+  background-color: var(--primary);
+}
+
+.edit-button:hover {
+  background-color: #4aa3a3;
+}
+
+.delete-button {
+  background-color: #ff6b6b;
+}
+
+.delete-button:hover {
+  background-color: #e14f4f;
+}
+
+.like-button.liked {
+  background-color: var(--secondary);
+}
+
+.comment-button {
+  background-color: var(--secondary);
+}
+
+.comment-button:hover {
+  background-color: #9274b0;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Forms */
+form input[type="text"],
+form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 40px;
+}
+
+.empty-state-title {
+  font-size: 22px;
+  margin-top: 10px;
+}
+
+.empty-state-message {
+  font-size: 16px;
+}
+
+/* Header with Button */
+.header-with-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* Animations on Mount */
+.progress-container {
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}

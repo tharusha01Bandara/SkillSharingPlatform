@@ -38,6 +38,10 @@ import Blog from '../home/blog/Blog';
 import Contact from '../home/contact/Contact';
 import Footer from '../home/common/footer/Footer';
 
+import LearningProgressForm from '../components/LearningProgressForm';
+import LearningProgressItem from '../components/LearningProgressItem';
+import LearningProgressList from '../components/LearningProgressList';
+
 import LearningPlanList from '../components/LearningPlanList';
 import LearningPlanForm from '../components/LearningPlanForm';
 import LearningPlanCard from '../components/LearningPlanCard';
@@ -124,8 +128,10 @@ class App extends Component {
         <Route exact path="/skill-post/:postId" component={SkillPostDetail} />
         <Route exact path="/edit-skill-post/:postId" component={EditSkillPost} />
         
-        
-        
+        {/* Learning Progress*/}
+      <Route exact path="/LearningProgressList" component={LearningProgressList} />
+      <Route exact path="/LearningProgressForm" component={LearningProgressForm} />
+      <Route exact path="/LearningProgressItem" component={LearningProgressItem} />  
         
         {/* Learning Plan */}
       <Route exact path="/LearningPlanForm" component={LearningPlanForm} />
