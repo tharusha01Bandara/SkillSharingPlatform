@@ -105,7 +105,8 @@ class AppHeader extends Component {
               <li><NavLink to="/courses">All Courses</NavLink></li>
               <li><NavLink to="/about">About</NavLink></li>
               <li><NavLink to="/SkillPostList">Skill Post</NavLink></li>
-
+              <li><NavLink to="/pricing">Learning Plan</NavLink></li>
+              <li><NavLink to="/journal">Friends</NavLink></li>
               <li><NavLink to="/contact">Contact</NavLink></li>
             </ul>
             
