@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 import { API_BASE_URL } from "../constants";
 import "./AddCourse.css";
 
 function AddCourse() {
+  const history = useHistory();
+
   const [formData, setFormData] = useState({
     courseName: "",
     lecturerId: "",
@@ -60,7 +63,7 @@ function AddCourse() {
         videoUrl: videoUrl
       };
 
-      const res = await axios.post(`${API_BASE_URL}/course`, updatedFormData, {
+      await axios.post(`${API_BASE_URL}/course`, updatedFormData, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -68,21 +71,10 @@ function AddCourse() {
 
       setNotification({ show: true, message: "Course and video uploaded successfully!", type: "success" });
 
-      setFormData({
-        courseName: "",
-        lecturerId: "",
-        yearLevel: "",
-        courseCode: "",
-        description: "",
-        enrollmentKey: "",
-        videoUrl: ""
-      });
-      setVideoFile(null);
-      setFileName("");
-
       setTimeout(() => {
         setNotification({ show: false, message: "", type: "" });
-      }, 5000);
+        history.push("/courses"); // 👈 Redirect to /courses
+      }, 2000);
 
     } catch (error) {
       setNotification({ show: true, message: "Failed to upload course or video!", type: "error" });

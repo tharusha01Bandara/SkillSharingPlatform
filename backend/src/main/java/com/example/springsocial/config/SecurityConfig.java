@@ -23,9 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true,
-        prePostEnabled = true
+    securedEnabled = true,
+    jsr250Enabled = true,
+    prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -57,8 +57,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder());
+            .userDetailsService(customUserDetailsService)
+            .passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint()).and()
             .authorizeRequests()
-                // Static and public resources
+                // Static resources
                 .antMatchers(
                     "/", "/error", "/favicon.ico",
                     "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg",
@@ -93,16 +93,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // Auth and OAuth
                 .antMatchers("/auth/**", "/oauth2/**").permitAll()
 
-                // Public course API (view, add, update, delete, upload video)
-                .antMatchers("/courses/**", "/courses", "/course/**", "/course").permitAll()
-          
-                 //learning-plans API
-                 .antMatchers("/learning-plans/*", "/learning-plans", "/learning-plans/*", "/learning-plans").permitAll()
-                    
-                // 👇 NOW ADDED: Public skill post API
-                .antMatchers("/skillposts/**", "/skillposts", "/skillpost/**", "/skillpost").permitAll()
+                // Public APIs
+                .antMatchers("/courses/**", "/course/**").permitAll()
+                .antMatchers("/learning-plans/**").permitAll()
+                .antMatchers("/skillposts/**", "/skillpost/**").permitAll()
 
-                // Any other endpoint
+                // User-related APIs require authentication
+                .antMatchers("/user/**").authenticated()
+
+                // All others
                 .anyRequest().authenticated()
             .and()
             .oauth2Login()
