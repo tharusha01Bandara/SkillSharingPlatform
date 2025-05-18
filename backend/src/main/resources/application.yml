@@ -4,7 +4,7 @@ spring:
     username: root
     password: tharusha2001
 
-  jpa:   
+  jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
@@ -65,3 +65,12 @@ app:
       - http://localhost:3000/oauth2/redirect
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
+
+# ✅ Logging settings (new)
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.example.springsocial: DEBUG

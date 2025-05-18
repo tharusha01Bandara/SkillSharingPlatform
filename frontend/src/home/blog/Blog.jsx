@@ -1,15 +1,15 @@
 import React from "react"
 import Back from "../common/back/Back"
-import BlogCard from "./BlogCard"
+import UserSearch from "../../components/UserSearch"
 import "./blog.css"
 
 const Blog = () => {
   return (
     <div>
-      <Back title='Blog Posts' />
+      <Back title='Friends' />
       <section className='blog padding'>
         <div className='container grid2'>
-          <BlogCard />
+          <UserSearch />
         </div>
       </section>
     </div>

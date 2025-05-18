@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom"; // ✅ For React Router v5
 import { API_BASE_URL } from "../constants";
 import "./CourseList.css";
 
@@ -10,6 +11,8 @@ function CourseList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [likes, setLikes] = useState({});
   const [comments, setComments] = useState({});
+
+  const history = useHistory(); // ✅ Correct usage
 
   useEffect(() => {
     setLoading(true);
@@ -42,10 +45,19 @@ function CourseList() {
     setComments(prev => ({ ...prev, [id]: [...prev[id], comment] }));
   };
 
+  const handleAddCourse = () => {
+    history.push('/AddCourse'); // 
+  };
+
+  const EditCourse = () => {
+    history.push('/coursesTable'); // 
+  };
+
   const filteredCourses = courses.filter(course => {
     const matchesFilter = filter === "all" || course.yearLevel.toString() === filter;
-    const matchesSearch = course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         course.courseCode.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.courseCode.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -57,6 +69,28 @@ function CourseList() {
         <div className="course-header-text">
           <h1>Explore Our Courses</h1>
           <p>Discover a wide range of courses designed to help you achieve your academic goals</p>
+          <button
+            className="share-skill-btn"
+            onClick={handleAddCourse} 
+
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Share a Course
+          </button>
+          <button
+            className="share-skill-btn"
+            onClick={EditCourse} 
+
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Edit Courses
+          </button>
         </div>
 
         <div className="course-actions">
@@ -72,7 +106,7 @@ function CourseList() {
 
           <div className="filter-container">
             <label htmlFor="year-filter">Filter by Year:</label>
-            <select 
+            <select
               id="year-filter"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -83,6 +117,13 @@ function CourseList() {
                 <option key={year} value={year}>Year {year}</option>
               ))}
             </select>
+          </div>
+
+          <div className="add-course-container">
+            <button className="add-course-button" onClick={handleAddCourse}>
+              <span className="add-course-icon">➕</span>
+              <span className="add-course-text">Add New Course</span>
+            </button>
           </div>
         </div>
       </div>
@@ -125,21 +166,22 @@ function CourseList() {
               <div className="interaction-section">
                 <div className="like-section">
                   <button onClick={() => handleLike(course.id)} className="like-button">👍 {likes[course.id]}</button>
-                  
                 </div>
                 <div className="comment-section">
                   <input
                     type="text"
                     placeholder="Add a comment"
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleComment(course.id, e.target.value);
+                      if (e.key === "Enter") {
+                        handleComment(course.id, e.target.value);
+                        e.target.value = "";
+                      }
                     }}
                   />
                   <div className="comment-list">
-                  {(comments[course.id] || []).map((c, i) => (
-  <div key={i} className="comment-item">💬 {c}</div>
-))}
-
+                    {(comments[course.id] || []).map((c, i) => (
+                      <div key={i} className="comment-item">💬 {c}</div>
+                    ))}
                   </div>
                 </div>
               </div>

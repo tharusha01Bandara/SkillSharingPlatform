@@ -262,7 +262,7 @@ function LearningPlanList() {
           </div>
         ))}
       </div>
-      <Footer />
+
     </div>
   );
 }
