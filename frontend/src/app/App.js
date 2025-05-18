@@ -38,10 +38,6 @@ import Blog from '../home/blog/Blog';
 import Contact from '../home/contact/Contact';
 import Footer from '../home/common/footer/Footer';
 
-import LearningProgressForm from '../components/LearningProgressForm';
-import LearningProgressItem from '../components/LearningProgressItem';
-import LearningProgressList from '../components/LearningProgressList';
-
 import LearningPlanList from '../components/LearningPlanList';
 import LearningPlanForm from '../components/LearningPlanForm';
 import LearningPlanCard from '../components/LearningPlanCard';
@@ -127,7 +123,30 @@ render() {
           <Route exact path="/create-learning-plan" component={LearningPlanForm} />
           <Route exact path="/edit-learning-plan/:id" component={LearningPlanForm} />
 
+          
+<Route exact path="/search-users" component={UserSearch} />
 
+          {/* User Profile */}
+          <PrivateRoute 
+            path="/profile" 
+            authenticated={this.state.authenticated} 
+            currentUser={this.state.currentUser}
+            component={Profile}
+          />
+
+          {/* Auth Routes */}
+          <Route 
+            path="/login"
+            render={(props) => <Login authenticated={this.state.authenticated} {...props} />}
+          />
+          <Route 
+            path="/signup"
+            render={(props) => <Signup authenticated={this.state.authenticated} {...props} />}
+          />
+          <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
+
+          {/* 404 */}
+          <Route component={NotFound} />
         </Switch>
       </div>
 
