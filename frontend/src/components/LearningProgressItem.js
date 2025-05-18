@@ -1,17 +1,14 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import api from '../services/api.js';
-import Header from './header.js';
+import api from '../services/api';
 import '../styles/LearningProgress.css';
 
 // Lazy load the CommentSection component
-const LazyCommentSection = lazy(() => import('./CommentSection.js'));
+const LazyCommentSection = lazy(() => import('./CommentSection'));
 
 function LearningProgressItem({ progress, onEdit, onDelete }) {
   const [showComments, setShowComments] = useState(false);
   const [liked, setLiked] = useState(progress.currentUserLiked);
   const [likeCount, setLikeCount] = useState(progress.likeCount);
-  const [showForm, setShowForm] = useState(false);
-    const [currentProgress, setCurrentProgress] = useState(null);
 
   useEffect(() => {
     setLiked(progress.currentUserLiked);
@@ -20,11 +17,6 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
-  };
-
-  const handleNewProgressClick = () => {
-    setCurrentProgress(null);
-    setShowForm(true);
   };
 
   const handleToggleLike = async () => {
@@ -46,11 +38,25 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
   const toggleComments = () => {
     setShowComments(prevState => !prevState);
   };
+  
+  // Display skills as tags when available
+  const renderSkillTags = () => {
+    if (!progress.skillsLearned) return null;
+    
+    const skills = progress.skillsLearned.split(',').map(skill => skill.trim());
+    
+    return (
+      <div className="skills-container">
+        {skills.map((skill, index) => (
+          <span key={index} className="skill-tag">{skill}</span>
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <div className="card">
+    <div className="card" data-id={progress.id}>
       <div className="content-header">
-        {/* <Header onNewProgressClick={handleNewProgressClick} /> */}
         <h2>{progress.title}</h2>
         <div className="meta-info">
           Posted by {progress.user.username} on {formatDate(progress.createdAt)}
@@ -59,22 +65,18 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
         </div>
         
         {progress.content && (
-          <div>
-            <strong>Content:</strong> {progress.tutorialCompleted}
+          <div className="content-detail">
+            <strong>What I learned:</strong> {progress.content}
           </div>
         )}
         
         {progress.tutorialCompleted && (
-          <div>
-            <strong>Tutorials Completed:</strong> {progress.tutorialCompleted}
+          <div className="content-detail">
+            <strong>Tutorials:</strong> {progress.tutorialCompleted}
           </div>
         )}
         
-        {progress.skillsLearned && (
-          <div>
-            <strong>Skills Learned:</strong> {progress.skillsLearned}
-          </div>
-        )}
+        {renderSkillTags()}
       </div>
       
       <div className="action-buttons">
@@ -82,15 +84,20 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
           className={`like-button ${liked ? 'liked' : ''}`}
           onClick={handleToggleLike}
         >
-          {liked ? 'Unlike' : 'Like'} ({likeCount})
+          {liked ? '❤️' : '🤍'} {likeCount}
         </button>
         
         <button className="comment-button" onClick={toggleComments}>
-          {showComments ? 'Hide Comments' : `Show Comments (${progress.commentCount})`}
+          💬 {progress.commentCount || 0}
         </button>
         
-        <button className="edit-button" onClick={() => onEdit(progress)}>Edit</button>
-        <button className="delete-button" onClick={() => onDelete(progress.id)}>Delete</button>
+        <button className="edit-button" onClick={() => onEdit(progress)}>
+          ✏️ Edit
+        </button>
+        
+        <button className="delete-button" onClick={() => onDelete(progress.id)}>
+          🗑️ Delete
+        </button>
       </div>
       
       {/* Comments section with proper rendering control */}

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import LearningProgressItem from './LearningProgressItem.js';
-import LearningProgressForm from './LearningProgressForm.js';
-import api from '../services/api.js';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import LearningProgressItem from './LearningProgressItem';
+import LearningProgressForm from './LearningProgressForm';
+import api from '../services/api';
 import '../styles/LearningProgress.css';
 
 function LearningProgressList() {
@@ -148,10 +149,13 @@ function LearningProgressList() {
           <div>
             <h2>Learning Progress</h2>
             {progressList.length > 0 && (
-              <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                <span data-tooltip="Total reports">📝 {progressList.length} Reports</span>
-                {" • "}
-                <span data-tooltip="Unique skills learned">✨ {getTotalSkills()} Skills</span>
+              <div className="stats-display">
+                <span className="stats-item" data-tooltip="Total progress reports">
+                  📝 {progressList.length} Reports
+                </span>
+                <span className="stats-item" data-tooltip="Unique skills learned">
+                  ✨ {getTotalSkills()} Skills
+                </span>
               </div>
             )}
           </div>
@@ -172,16 +176,18 @@ function LearningProgressList() {
             </p>
           </div>
         ) : (
-          progressList.map((progress, index) => (
-            <LearningProgressItem
-              key={progress.id}
-              progress={progress}
-              onEdit={() => handleEditProgress(progress)}
-              onDelete={() => handleDelete(progress.id)}
-              animationDelay={index * 0.1}
-              data-id={progress.id}
-            />
-          ))
+          <div className="progress-grid">
+            {progressList.map((progress, index) => (
+              <LearningProgressItem
+                key={progress.id}
+                progress={progress}
+                onEdit={() => handleEditProgress(progress)}
+                onDelete={() => handleDelete(progress.id)}
+                animationDelay={index * 0.1}
+                data-id={progress.id}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
