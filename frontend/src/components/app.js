@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from './header.js';
-import LearningProgressList from './LearningProgressList.jsx';
+import LearningProgressList from './LearningProgressList.js';
 import LearningProgressForm from './LearningProgressForm.js';
 import api from '../services/api.js';
 
@@ -14,10 +14,7 @@ function App() {
     setShowForm(true);
   };
 
-  const handleEditProgress = (progress) => {
-    setCurrentProgress(progress);
-    setShowForm(true);
-  };
+  
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -52,7 +49,7 @@ function App() {
       ) : (
         <LearningProgressList 
           key={refreshKey}
-          onEditItem={handleEditProgress} 
+          //onEditItem={handleEditProgress}
         />
       )}
     </div>
