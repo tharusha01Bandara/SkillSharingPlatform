@@ -14,10 +14,7 @@ function App() {
     setShowForm(true);
   };
 
-  const handleEditProgress = (progress) => {
-    setCurrentProgress(progress);
-    setShowForm(true);
-  };
+  
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -52,7 +49,7 @@ function App() {
       ) : (
         <LearningProgressList 
           key={refreshKey}
-          onEditItem={handleEditProgress}
+          //onEditItem={handleEditProgress}
         />
       )}
     </div>

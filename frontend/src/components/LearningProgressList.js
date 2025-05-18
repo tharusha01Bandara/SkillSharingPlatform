@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import LearningProgressItem from './LearningProgressItem.js';
+import LearningProgressForm from './LearningProgressForm.js';
 import api from '../services/api.js';
 import '../styles/LearningProgress.css';
 
-function LearningProgressList({ onEditItem }) {
+function LearningProgressList() {
   const [progressList, setProgressList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterActive, setFilterActive] = useState(false);
-  const history = useHistory();
+  const [showForm, setShowForm] = useState(false);
+  const [currentProgress, setCurrentProgress] = useState(null);
 
   useEffect(() => {
     fetchAllProgress();
@@ -61,8 +62,39 @@ function LearningProgressList({ onEditItem }) {
     }
   };
 
+  const handleEditProgress = (progress) => {
+    setCurrentProgress(progress);
+    setShowForm(true);
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (currentProgress) {
+        // Update existing progress
+        await api.updateProgress(currentProgress.id, formData);
+        // Refresh the list
+        fetchAllProgress();
+      } else {
+        // Create new progress
+        await api.createProgress(formData);
+        fetchAllProgress();
+      }
+      // Hide form and reset current progress
+      setShowForm(false);
+      setCurrentProgress(null);
+    } catch (error) {
+      console.error('Error saving progress:', error);
+    }
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setCurrentProgress(null);
+  };
+
   const handleAddNewProgress = () => {
-    history.push('/LearningProgressForm');
+    setCurrentProgress(null);
+    setShowForm(true);
   };
 
   const getTotalSkills = () => {
@@ -82,6 +114,19 @@ function LearningProgressList({ onEditItem }) {
         <div className="loading-state">
           Loading your learning journey...
         </div>
+      </div>
+    );
+  }
+
+  // Show form when adding new progress or editing existing progress
+  if (showForm) {
+    return (
+      <div className="progress-container">
+        <LearningProgressForm 
+          progress={currentProgress} 
+          onSubmit={handleFormSubmit} 
+          onCancel={handleFormCancel} 
+        />
       </div>
     );
   }
@@ -131,8 +176,8 @@ function LearningProgressList({ onEditItem }) {
             <LearningProgressItem
               key={progress.id}
               progress={progress}
-              onEdit={onEditItem}
-              onDelete={handleDelete}
+              onEdit={() => handleEditProgress(progress)}
+              onDelete={() => handleDelete(progress.id)}
               animationDelay={index * 0.1}
               data-id={progress.id}
             />

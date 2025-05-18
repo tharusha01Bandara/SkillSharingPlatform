@@ -33,6 +33,7 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
       if (onSubmit) {
         // Pass form data to the parent component handler
@@ -42,6 +43,7 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
         if (progress) {
           // Update existing progress
           await axios.put(`${API_BASE_URL}/progress/${progress.id}`, formData);
+          alert('Progress updated successfully!');
         } else {
           // Create new progress
           await axios.post(`${API_BASE_URL}/progress`, formData);
@@ -96,8 +98,8 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
           />
         </div>
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <button type="button" onClick={onCancel}>Cancel</button>
-          <button type="submit">{progress ? 'Update' : 'Submit'}</button>
+          <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button>
+          <button type="submit" className="btn-primary">{progress ? 'Update' : 'Submit'}</button>
         </div>
       </form>
     </div>
