@@ -439,7 +439,7 @@ function SkillPostList() {
           </svg>
         </button>
       </div>
-      <Footer />
+
     </div>
   );
 }
