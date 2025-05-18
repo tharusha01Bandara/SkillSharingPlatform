@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import CommentSection from './CommentSection.js';
-import api from '../services/api.js';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import api from '../services/api';
+import '../styles/LearningProgress.css';
+
+// Lazy load the CommentSection component
+const LazyCommentSection = lazy(() => import('./CommentSection'));
 
 function LearningProgressItem({ progress, onEdit, onDelete }) {
   const [showComments, setShowComments] = useState(false);
@@ -32,46 +35,79 @@ function LearningProgressItem({ progress, onEdit, onDelete }) {
     }
   };
 
+  const toggleComments = () => {
+    setShowComments(prevState => !prevState);
+  };
+  
+  // Display skills as tags when available
+  const renderSkillTags = () => {
+    if (!progress.skillsLearned) return null;
+    
+    const skills = progress.skillsLearned.split(',').map(skill => skill.trim());
+    
+    return (
+      <div className="skills-container">
+        {skills.map((skill, index) => (
+          <span key={index} className="skill-tag">{skill}</span>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="card">
-      <h2>{progress.title}</h2>
-      <div className="meta-info">
-        Posted by {progress.user.username} on {formatDate(progress.createdAt)}
-        {progress.updatedAt !== progress.createdAt && 
-          ` (Updated: ${formatDate(progress.updatedAt)})`}
+    <div className="card" data-id={progress.id}>
+      <div className="content-header">
+        <h2>{progress.title}</h2>
+        <div className="meta-info">
+          Posted by {progress.user.username} on {formatDate(progress.createdAt)}
+          {progress.updatedAt !== progress.createdAt && 
+            ` (Updated: ${formatDate(progress.updatedAt)})`}
+        </div>
+        
+        {progress.content && (
+          <div className="content-detail">
+            <strong>What I learned:</strong> {progress.content}
+          </div>
+        )}
+        
+        {progress.tutorialCompleted && (
+          <div className="content-detail">
+            <strong>Tutorials:</strong> {progress.tutorialCompleted}
+          </div>
+        )}
+        
+        {renderSkillTags()}
       </div>
       
-      <p>{progress.content}</p>
-      
-      {progress.tutorialCompleted && (
-        <div>
-          <strong>Tutorials Completed:</strong> {progress.tutorialCompleted}
-        </div>
-      )}
-      
-      {progress.skillsLearned && (
-        <div>
-          <strong>Skills Learned:</strong> {progress.skillsLearned}
-        </div>
-      )}
-      
-      <div className="likes">
+      <div className="action-buttons">
         <button 
-          className={liked ? 'liked' : ''} 
+          className={`like-button ${liked ? 'liked' : ''}`}
           onClick={handleToggleLike}
         >
-          {liked ? 'Unlike' : 'Like'} ({likeCount})
+          {liked ? '❤️' : '🤍'} {likeCount}
         </button>
         
-        <button onClick={() => setShowComments(!showComments)}>
-          {showComments ? 'Hide Comments' : `Show Comments (${progress.commentCount})`}
+        <button className="comment-button" onClick={toggleComments}>
+          💬 {progress.commentCount || 0}
         </button>
         
-        <button onClick={() => onEdit(progress)}>Edit</button>
-        <button className="delete" onClick={() => onDelete(progress.id)}>Delete</button>
+        <button className="edit-button" onClick={() => onEdit(progress)}>
+          ✏️ Edit
+        </button>
+        
+        <button className="delete-button" onClick={() => onDelete(progress.id)}>
+          🗑️ Delete
+        </button>
       </div>
       
-      {showComments && <CommentSection progressId={progress.id} />}
+      {/* Comments section with proper rendering control */}
+      {showComments && (
+        <div className="comments-container">
+          <Suspense fallback={<div>Loading comments...</div>}>
+            <LazyCommentSection progressId={progress.id} />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 }

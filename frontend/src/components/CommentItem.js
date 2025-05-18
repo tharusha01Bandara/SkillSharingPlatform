@@ -1,62 +1,70 @@
 import React, { useState } from 'react';
-import Header from './header.js';
-import LearningProgressList from './LearningProgressList.jsx';
-import LearningProgressForm from './LearningProgressForm.js';
-import api from '../services/api.js';
+import '../styles/CommentItem.css';
 
-function App() {
-  const [showForm, setShowForm] = useState(false);
-  const [currentProgress, setCurrentProgress] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleNewProgressClick = () => {
-    setCurrentProgress(null);
-    setShowForm(true);
+function CommentItem({ comment, onUpdate, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(comment.content);
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
   };
 
-  const handleEditProgress = (progress) => {
-    setCurrentProgress(progress);
-    setShowForm(true);
-  };
-
-  const handleFormSubmit = async (formData) => {
-    try {
-      if (currentProgress) {
-        await api.updateProgress(currentProgress.id, formData);
-      } else {
-        await api.createProgress(formData);
-      }
-      setShowForm(false);
-      setCurrentProgress(null);
-      setRefreshKey(prev => prev + 1);
-    } catch (error) {
-      console.error('Error saving progress:', error);
+  const handleUpdate = () => {
+    if (editContent.trim() && editContent !== comment.content) {
+      onUpdate(editContent);
     }
+    setIsEditing(false);
   };
 
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setCurrentProgress(null);
+  const handleCancel = () => {
+    setEditContent(comment.content);
+    setIsEditing(false);
   };
 
   return (
-    <div className="container">
-      <Header onNewProgressClick={handleNewProgressClick} />
+    <div className="comment-item">
+      <div className="comment-header">
+        <div className="user-info">
+          {comment.user && comment.user.imageUrl && (
+            <img 
+              src={comment.user.imageUrl} 
+              alt={`${comment.user.name}'s avatar`} 
+              className="user-avatar" 
+            />
+          )}
+          <span className="user-name">{comment.user ? comment.user.name : 'Anonymous'}</span>
+        </div>
+        <div className="comment-date">
+          {formatDate(comment.createdAt)}
+        </div>
+      </div>
       
-      {showForm ? (
-        <LearningProgressForm 
-          progress={currentProgress}
-          onSubmit={handleFormSubmit}
-          onCancel={handleFormCancel}
-        />
-      ) : (
-        <LearningProgressList 
-          key={refreshKey}
-          onEditItem={handleEditProgress} 
-        />
-      )}
+      <div className="comment-content">
+        {isEditing ? (
+          <div className="edit-mode">
+            <textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              rows={3}
+            />
+            <div className="edit-actions">
+              <button onClick={handleUpdate} className="save-btn">Save</button>
+              <button onClick={handleCancel} className="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <p>{comment.content}</p>
+            <div className="comment-actions">
+              <button onClick={() => setIsEditing(true)} className="edit-btn">Edit</button>
+              <button onClick={onDelete} className="delete-btn">Delete</button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default CommentItem;
