@@ -3,9 +3,12 @@ package com.example.springsocial.controller;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.springsocial.model.SkillPost;
+import com.example.springsocial.model.User;
 import com.example.springsocial.repository.SkillPostRepository;
+import com.example.springsocial.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +22,9 @@ public class SkillPostController {
 
     @Autowired
     private SkillPostRepository skillPostRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private Cloudinary cloudinary;
@@ -94,5 +100,55 @@ public class SkillPostController {
         }
         skillPostRepository.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    // Like a skill post
+    @PostMapping("/skillposts/{id}/like")
+    public ResponseEntity<?> likePost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        SkillPost post = skillPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("SkillPost not found with id " + id));
+
+        if (post.isLikedBy(currentUser)) {
+            return ResponseEntity.badRequest().body("Post already liked by user");
+        }
+
+        post.addLike(currentUser);
+        skillPostRepository.save(post);
+
+        return ResponseEntity.ok(Map.of(
+            "liked", true,
+            "likesCount", post.getLikesCount()
+        ));
+    }
+
+    // Unlike a skill post
+    @DeleteMapping("/skillposts/{id}/like")
+    public ResponseEntity<?> unlikePost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        SkillPost post = skillPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("SkillPost not found with id " + id));
+
+        if (!post.isLikedBy(currentUser)) {
+            return ResponseEntity.badRequest().body("Post not liked by user");
+        }
+
+        post.removeLike(currentUser);
+        skillPostRepository.save(post);
+
+        return ResponseEntity.ok(Map.of(
+            "liked", false,
+            "likesCount", post.getLikesCount()
+        ));
+    }
+
+    // Get like status for a post
+    @GetMapping("/skillposts/{id}/like")
+    public ResponseEntity<?> getLikeStatus(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        SkillPost post = skillPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("SkillPost not found with id " + id));
+
+        return ResponseEntity.ok(Map.of(
+            "liked", post.isLikedBy(currentUser),
+            "likesCount", post.getLikesCount()
+        ));
     }
 }

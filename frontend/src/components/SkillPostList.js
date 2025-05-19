@@ -15,6 +15,8 @@ function SkillPostList() {
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [expandedPost, setExpandedPost] = useState(null);
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(new Set());
 
   // Modern gradient backgrounds for cards
   const cardGradients = [
@@ -142,6 +144,76 @@ function SkillPostList() {
     const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
     return levels[Math.floor(Math.random() * levels.length)];
   };
+
+  const handleImageClick = (e, images, index) => {
+    e.stopPropagation();
+    setSelectedImage({ images, index });
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
+  const navigateImage = (direction) => {
+    if (!selectedImage) return;
+    const { images, index } = selectedImage;
+    const newIndex = (index + direction + images.length) % images.length;
+    setSelectedImage({ images, index: newIndex });
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const isLiked = likedPosts.has(postId);
+      const response = await axios({
+        method: isLiked ? 'delete' : 'post',
+        url: `${API_BASE_URL}/skillposts/${postId}/like`,
+        withCredentials: true
+      });
+
+      const { liked, likesCount } = response.data;
+      
+      setSkillPosts(skillPosts.map(post => 
+        post.id === postId 
+          ? { ...post, likesCount } 
+          : post
+      ));
+
+      setLikedPosts(prev => {
+        const newLikedPosts = new Set(prev);
+        if (liked) {
+          newLikedPosts.add(postId);
+        } else {
+          newLikedPosts.delete(postId);
+        }
+        return newLikedPosts;
+      });
+
+      showNotification(isLiked ? 'Post unliked' : 'Post liked', 'success');
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      showNotification('Error toggling like', 'error');
+    }
+  };
+
+  const checkLikeStatus = async (postId) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/skillposts/${postId}/like`,
+        { withCredentials: true }
+      );
+      
+      if (response.data.liked) {
+        setLikedPosts(prev => new Set([...prev, postId]));
+      }
+    } catch (error) {
+      console.error('Error checking like status:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Check like status for each post
+    skillPosts.forEach(post => checkLikeStatus(post.id));
+  }, [skillPosts]);
 
   return (
     <div className="feed-container">
@@ -288,19 +360,22 @@ function SkillPostList() {
 
               {post.imageUrls && post.imageUrls.split(",").length > 0 && (
                 <div className="post-images">
-                  {post.imageUrls.split(",").map((url, imgIndex) => (
+                  {post.imageUrls.split(",").slice(0, 6).map((url, imgIndex) => (
                     <div 
                       key={imgIndex} 
                       className="image-container"
-                      style={{
-                        backgroundImage: `url(${url.trim()})`,
-                      }}
+                      onClick={(e) => handleImageClick(e, post.imageUrls.split(","), imgIndex)}
                     >
                       <img 
                         src={url.trim()} 
                         alt={`${post.title} - image ${imgIndex + 1}`}
-                        className="hidden-img"
+                        loading="lazy"
                       />
+                      {imgIndex === 4 && post.imageUrls.split(",").length > 5 && (
+                        <div className="image-count-overlay">
+                          +{post.imageUrls.split(",").length - 5}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -308,11 +383,24 @@ function SkillPostList() {
 
               <div className="post-footer">
                 <div className="post-stats">
-                  <button className="stat-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <button 
+                    className={`stat-btn ${likedPosts.has(post.id) ? 'liked' : ''}`}
+                    onClick={(e) => handleLike(post.id)}
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill={likedPosts.has(post.id) ? "currentColor" : "none"} 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
-                    <span>Like</span>
+                    <span>{likedPosts.has(post.id) ? 'Liked' : 'Like'}</span>
                   </button>
                   <button className="stat-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -334,6 +422,36 @@ function SkillPostList() {
           </div>
         ))}
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="image-modal active" onClick={closeImageModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeImageModal}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <img 
+              src={selectedImage.images[selectedImage.index].trim()} 
+              alt="Full size"
+            />
+            <div className="modal-nav">
+              <button onClick={() => navigateImage(-1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button onClick={() => navigateImage(1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

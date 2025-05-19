@@ -5,6 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Column;
 import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class SkillPost {
@@ -22,6 +25,14 @@ public class SkillPost {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "skill_post_likes",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likes = new HashSet<>();
 
     public SkillPost() {
         // Default constructor
@@ -74,5 +85,29 @@ public class SkillPost {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
+    }
+
+    public void addLike(User user) {
+        this.likes.add(user);
+    }
+
+    public void removeLike(User user) {
+        this.likes.remove(user);
+    }
+
+    public boolean isLikedBy(User user) {
+        return this.likes.contains(user);
+    }
+
+    public int getLikesCount() {
+        return this.likes.size();
     }
 }
