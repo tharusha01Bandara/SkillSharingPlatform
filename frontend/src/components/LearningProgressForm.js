@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/LearningProgress.css';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
-function LearningProgressForm({ progress, onSubmit, onCancel }) {
+function LearningProgressForm({ progress, onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     tutorialCompleted: '',
     skillsLearned: '',
   });
-  
+
   useEffect(() => {
     if (progress) {
       setFormData({
@@ -22,7 +21,7 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
       });
     }
   }, [progress]);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -30,32 +29,24 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
       [name]: value
     }));
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      if (onSubmit) {
-        // Pass form data to the parent component handler
-        onSubmit(formData);
+      if (progress) {
+        // Update existing progress
+        await axios.put(`${API_BASE_URL}/progress/${progress.id}`, formData);
       } else {
-        // Fallback to direct API call if no handler is provided
-        if (progress) {
-          // Update existing progress
-          await axios.put(`${API_BASE_URL}/progress/${progress.id}`, formData);
-          alert('Progress updated successfully!');
-        } else {
-          // Create new progress
-          await axios.post(`${API_BASE_URL}/progress`, formData);
-          alert('Progress added successfully!');
-        }
+        // Create new progress
+        await axios.post(`${API_BASE_URL}/progress`, formData);
       }
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error('Error saving progress:', error);
       alert('Something went wrong. Please try again.');
     }
   };
-  
+
   return (
     <div className="card">
       <h2>{progress ? 'Edit Progress' : 'Add New Progress'}</h2>
@@ -98,8 +89,8 @@ function LearningProgressForm({ progress, onSubmit, onCancel }) {
           />
         </div>
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button>
-          <button type="submit" className="btn-primary">{progress ? 'Update' : 'Submit'}</button>
+          <button type="button" onClick={onCancel}>Cancel</button>
+          <button type="submit">{progress ? 'Update' : 'Submit'}</button>
         </div>
       </form>
     </div>

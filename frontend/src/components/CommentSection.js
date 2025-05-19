@@ -8,20 +8,31 @@ function CommentSection({ progressId }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchComments = async() => {
+    const fetchComments = async () => {
       try {
-        setLoading(true);
         const data = await api.getComments(progressId);
         setComments(data);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching comments:', error);
+      } finally {
         setLoading(false);
       }
     };
   
     fetchComments();
   }, [progressId]);
+  
+
+//   const fetchComments = async () => {
+//     try {
+//       const data = await api.getComments(progressId);
+//       setComments(data);
+//       setLoading(false);
+//     } catch (error) {
+//       console.error('Error fetching comments:', error);
+//       setLoading(false);
+//     }
+//   };
 
   const handleAddComment = async (e) => {
     e.preventDefault();
@@ -30,20 +41,17 @@ function CommentSection({ progressId }) {
     try {
       const commentData = { content: newComment };
       const addedComment = await api.addComment(progressId, commentData);
-      setComments(prevComments => [...prevComments, addedComment]);
+      setComments([...comments, addedComment]);
       setNewComment('');
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
-  const handleUpdateComment = async (commentId, content) => {
+  const handleUpdateComment = async (commentId, commentData) => {
     try {
-      const commentData = { content };
       const updatedComment = await api.updateComment(progressId, commentId, commentData);
-      setComments(prevComments => 
-        prevComments.map(c => c.id === commentId ? updatedComment : c)
-      );
+      setComments(comments.map(c => c.id === commentId ? updatedComment : c));
     } catch (error) {
       console.error('Error updating comment:', error);
     }
@@ -52,61 +60,44 @@ function CommentSection({ progressId }) {
   const handleDeleteComment = async (commentId) => {
     try {
       await api.deleteComment(progressId, commentId);
-      setComments(prevComments => 
-        prevComments.filter(c => c.id !== commentId)
-      );
+      setComments(comments.filter(c => c.id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
   };
 
-  const submitComment = () => {
-    if (!newComment.trim()) return;
-    
-    const submitEvent = { preventDefault: () => {} };
-    handleAddComment(submitEvent);
-  };
-
-  if(loading) {
-    return <p>Loading comments...</p>;
-  }
-
   return (
     <div className="comments-section">
       <h3>Comments</h3>
       
-      <div className="comments-list">
-        {comments.length > 0 ? (
-          comments.map(comment => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              onUpdate={(content) => handleUpdateComment(comment.id, content)}
-              onDelete={() => handleDeleteComment(comment.id)}
+      {loading ? (
+        <p>Loading comments...</p>
+      ) : (
+        <>
+          {comments.length === 0 ? (
+            <p>No comments yet.</p>
+          ) : (
+            comments.map(comment => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                onUpdate={handleUpdateComment}
+                onDelete={handleDeleteComment}
+              />
+            ))
+          )}
+          
+          <form onSubmit={handleAddComment}>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add a comment..."
+              required
             />
-          ))
-        ) : (
-          <p>No comments yet. Be the first to comment!</p>
-        )}
-      </div>
-
-      <div className="add-comment-section">
-        <div className="comment-form">
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
-            rows={3}
-          />
-          <button 
-            onClick={submitComment} 
-            className="submit-btn"
-            disabled={!newComment.trim()}
-          >
-            Add Comment
-          </button>
-        </div>
-      </div>
+            <button type="submit">Add Comment</button>
+          </form>
+        </>
+      )}
     </div>
   );
 }
