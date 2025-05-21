@@ -15,6 +15,8 @@ function SkillPostList() {
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [expandedPost, setExpandedPost] = useState(null);
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(new Set());
 
   // Modern gradient backgrounds for cards
   const cardGradients = [
@@ -118,71 +120,7 @@ function SkillPostList() {
     const postToDelete = skillPosts.find(post => post.id === postId);
     const title = postToDelete ? postToDelete.title : "this post";
     
-    // Create a more attractive delete modal
-    const confirmDelete = () => {
-      return new Promise((resolve) => {
-        // Create modal elements
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'delete-modal-overlay';
-        
-        const modalContent = document.createElement('div');
-        modalContent.className = 'delete-modal';
-        
-        modalContent.innerHTML = `
-          <div class="delete-modal-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <h3>Confirm Deletion</h3>
-          </div>
-          <p>Are you sure you want to delete <strong>"${title}"</strong>?</p>
-          <p class="delete-warning">This action cannot be undone.</p>
-          <div class="delete-modal-actions">
-            <button class="cancel-btn">Cancel</button>
-            <button class="confirm-btn">Delete</button>
-          </div>
-        `;
-        
-        modalOverlay.appendChild(modalContent);
-        document.body.appendChild(modalOverlay);
-        
-        // Add animation class after a small delay for transition effect
-        setTimeout(() => {
-          modalOverlay.classList.add('visible');
-          modalContent.classList.add('visible');
-        }, 10);
-        
-        // Add event listeners
-        const cancelBtn = modalContent.querySelector('.cancel-btn');
-        const confirmBtn = modalContent.querySelector('.confirm-btn');
-        
-        cancelBtn.addEventListener('click', () => {
-          closeModal(false);
-        });
-        
-        confirmBtn.addEventListener('click', () => {
-          closeModal(true);
-        });
-        
-        // Close modal function
-        const closeModal = (confirmed) => {
-          modalOverlay.classList.remove('visible');
-          modalContent.classList.remove('visible');
-          
-          setTimeout(() => {
-            document.body.removeChild(modalOverlay);
-            resolve(confirmed);
-          }, 300); // Wait for animation to complete
-        };
-      });
-    };
-
-    // Show the custom delete modal
-    const confirmed = await confirmDelete();
-    
-    if (confirmed) {
+    if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
       try {
         setDeleteLoading(postId);
         await axios.delete(`${API_BASE_URL}/skillposts/${postId}`);
@@ -207,8 +145,78 @@ function SkillPostList() {
     return levels[Math.floor(Math.random() * levels.length)];
   };
 
+  const handleImageClick = (e, images, index) => {
+    e.stopPropagation();
+    setSelectedImage({ images, index });
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
+  const navigateImage = (direction) => {
+    if (!selectedImage) return;
+    const { images, index } = selectedImage;
+    const newIndex = (index + direction + images.length) % images.length;
+    setSelectedImage({ images, index: newIndex });
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const isLiked = likedPosts.has(postId);
+      const response = await axios({
+        method: isLiked ? 'delete' : 'post',
+        url: `${API_BASE_URL}/skillposts/${postId}/like`,
+        withCredentials: true
+      });
+
+      const { liked, likesCount } = response.data;
+      
+      setSkillPosts(skillPosts.map(post => 
+        post.id === postId 
+          ? { ...post, likesCount } 
+          : post
+      ));
+
+      setLikedPosts(prev => {
+        const newLikedPosts = new Set(prev);
+        if (liked) {
+          newLikedPosts.add(postId);
+        } else {
+          newLikedPosts.delete(postId);
+        }
+        return newLikedPosts;
+      });
+
+      showNotification(isLiked ? 'Post unliked' : 'Post liked', 'success');
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      showNotification('Error toggling like', 'error');
+    }
+  };
+
+  const checkLikeStatus = async (postId) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/skillposts/${postId}/like`,
+        { withCredentials: true }
+      );
+      
+      if (response.data.liked) {
+        setLikedPosts(prev => new Set([...prev, postId]));
+      }
+    } catch (error) {
+      console.error('Error checking like status:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Check like status for each post
+    skillPosts.forEach(post => checkLikeStatus(post.id));
+  }, [skillPosts]);
+
   return (
-    <div className="skill-posts-container">
+    <div className="feed-container">
       {/* Notification component */}
       {notification.show && (
         <div className={`notification ${notification.type}`}>
@@ -239,25 +247,24 @@ function SkillPostList() {
         </div>
       )}
       
-      <div className="skill-posts-header">
-        <h2>Explore Skill Posts</h2>
-        <p className="subtitle">Discover skills and expertise shared by the community</p>
+      <div className="feed-header">
+        <h2>Skill Feed</h2>
         <button 
-          className="share-skill-btn"
+          className="create-post-btn"
           onClick={() => history.push('/AddSkillPost')}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          Share a new skill
+          Share a Skill
         </button>
       </div>
 
       {isLoading && (
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Loading skill posts...</p>
+          <p>Loading posts...</p>
         </div>
       )}
 
@@ -280,138 +287,134 @@ function SkillPostList() {
             <line x1="12" y1="18" x2="12" y2="12"></line>
             <line x1="9" y1="15" x2="15" y2="15"></line>
           </svg>
-          <h3>No Skill Posts Yet</h3>
+          <h3>No Posts Yet</h3>
           <p>Be the first to share your skills with the community!</p>
           <button 
             className="create-post-btn" 
             onClick={() => history.push('/create-skill-post')}
           >
-            Create Skill Post
+            Create Post
           </button>
         </div>
       )}
 
-      <div className="skill-posts-grid">
-        {skillPosts.map((post, index) => (
+      <div className="feed-posts">
+        {skillPosts.map((post) => (
           <div 
             key={post.id} 
-            className={`skill-post-card ${expandedPost === post.id ? 'expanded' : ''}`}
-            onClick={() => toggleExpandPost(post.id)}
+            className={`feed-post ${expandedPost === post.id ? 'expanded' : ''}`}
           >
-            <div className="card-gradient-header" style={{ background: getCardGradient(index) }}>
-              <div className="post-category">
-                <span className="category-badge">{getSkillLevel()}</span>
+            <div className="post-header">
+              <div className="post-author">
+                <div className="author-avatar">
+                  <img src={post.authorAvatar || 'https://via.placeholder.com/40'} alt="Author" />
+                </div>
+                <div className="author-info">
+                  <h3>{post.authorName || 'Anonymous User'}</h3>
+                  <span className="post-time">{formatDate(post.createdAt)}</span>
+                </div>
               </div>
-              <h3 className="post-title">{post.title}</h3>
+              <div className="post-actions">
+                <button 
+                  className="action-btn edit-btn"
+                  onClick={(e) => handleEdit(e, post.id)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button 
+                  className={`action-btn delete-btn ${deleteLoading === post.id ? 'loading' : ''}`}
+                  onClick={(e) => handleDelete(e, post.id)}
+                  disabled={deleteLoading === post.id}
+                >
+                  {deleteLoading === post.id ? 
+                    <div className="btn-spinner"></div> : 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  }
+                </button>
+              </div>
             </div>
-            
-            <div className="skill-post-content">
+
+            <div className="post-content">
+              <h2 className="post-title">{post.title}</h2>
               <p className={`post-description ${expandedPost === post.id ? 'expanded-text' : ''}`}>
                 {expandedPost === post.id ? post.description : truncateText(post.description)}
               </p>
               
-              {post.description && post.description.length > 150 && expandedPost !== post.id && (
-                <button className="read-more-btn" onClick={(e) => {
-                  e.stopPropagation();
-                  toggleExpandPost(post.id);
-                }}>
-                  Read more
+              {post.description && post.description.length > 150 && (
+                <button 
+                  className="read-more-btn"
+                  onClick={() => toggleExpandPost(post.id)}
+                >
+                  {expandedPost === post.id ? 'Show less' : 'Read more'}
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
+                    <polyline points={expandedPost === post.id ? "18 15 12 9 6 15" : "6 9 12 15 18 9"}></polyline>
                   </svg>
                 </button>
               )}
-              
-              <div className="skill-summary">
-                <h4>Skills Outline:</h4>
-                <ul className="skills-list">
-                  <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 11 12 14 22 4"></polyline>
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                    Core {post.title.split(' ')[0]} fundamentals
-                  </li>
-                  <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 11 12 14 22 4"></polyline>
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                    Advanced techniques
-                  </li>
-                  <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 11 12 14 22 4"></polyline>
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                    Practical applications
-                  </li>
-                </ul>
-              </div>
-              
+
               {post.imageUrls && post.imageUrls.split(",").length > 0 && (
                 <div className="post-images">
-                  {post.imageUrls.split(",").slice(0, 3).map((url, imgIndex) => (
+                  {post.imageUrls.split(",").slice(0, 6).map((url, imgIndex) => (
                     <div 
                       key={imgIndex} 
                       className="image-container"
-                      style={{
-                        backgroundImage: `url(${url.trim()})`,
-                      }}
+                      onClick={(e) => handleImageClick(e, post.imageUrls.split(","), imgIndex)}
                     >
                       <img 
                         src={url.trim()} 
                         alt={`${post.title} - image ${imgIndex + 1}`}
-                        className="hidden-img" // Hidden for accessibility
+                        loading="lazy"
                       />
+                      {imgIndex === 4 && post.imageUrls.split(",").length > 5 && (
+                        <div className="image-count-overlay">
+                          +{post.imageUrls.split(",").length - 5}
+                        </div>
+                      )}
                     </div>
                   ))}
-                  {post.imageUrls.split(",").length > 3 && (
-                    <div className="more-images">
-                      <span>+{post.imageUrls.split(",").length - 3}</span>
-                    </div>
-                  )}
                 </div>
               )}
-              
-              <div className="post-meta">
-                <div className="post-time">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  <span>{formatDate(post.createdAt)}</span>
-                </div>
-                <div className="post-actions">
+
+              <div className="post-footer">
+                <div className="post-stats">
                   <button 
-                    className="edit-btn"
-                    onClick={(e) => handleEdit(e, post.id)}
-                    aria-label="Edit skill post"
+                    className={`stat-btn ${likedPosts.has(post.id) ? 'liked' : ''}`}
+                    onClick={(e) => handleLike(post.id)}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill={likedPosts.has(post.id) ? "currentColor" : "none"} 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
-                    Edit
+                    <span>{likedPosts.has(post.id) ? 'Liked' : 'Like'}</span>
                   </button>
-                  <button 
-                    className={`delete-btn ${deleteLoading === post.id ? 'loading' : ''}`}
-                    onClick={(e) => handleDelete(e, post.id)}
-                    disabled={deleteLoading === post.id}
-                    aria-label="Delete skill post"
-                  >
-                    {deleteLoading === post.id ? 
-                      <div className="btn-spinner"></div> : 
-                      <span className="delete-btn-content">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          <line x1="10" y1="11" x2="10" y2="17"></line>
-                          <line x1="14" y1="11" x2="14" y2="17"></line>
-                        </svg>
-                        Delete
-                      </span>
-                    }
+                  <button className="stat-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Comment</span>
+                  </button>
+                  <button className="stat-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                      <polyline points="16 6 12 2 8 6"></polyline>
+                      <line x1="12" y1="2" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Share</span>
                   </button>
                 </div>
               </div>
@@ -420,26 +423,35 @@ function SkillPostList() {
         ))}
       </div>
 
-      <div className="pagination">
-        <button className="pagination-btn prev-btn" disabled>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-          Previous
-        </button>
-        <div className="page-numbers">
-          <button className="page-number active">1</button>
-          <button className="page-number">2</button>
-          <button className="page-number">3</button>
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="image-modal active" onClick={closeImageModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeImageModal}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <img 
+              src={selectedImage.images[selectedImage.index].trim()} 
+              alt="Full size"
+            />
+            <div className="modal-nav">
+              <button onClick={() => navigateImage(-1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button onClick={() => navigateImage(1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
-        <button className="pagination-btn next-btn">
-          Next
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-      </div>
-
+      )}
     </div>
   );
 }
